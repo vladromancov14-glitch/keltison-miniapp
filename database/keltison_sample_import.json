@@ -1,0 +1,284 @@
+{
+  "brands": [
+    {
+      "name": "Apple",
+      "logo_url": "https://logo.clearbit.com/apple.com",
+      "website": "https://apple.com"
+    },
+    {
+      "name": "Samsung",
+      "logo_url": "https://logo.clearbit.com/samsung.com",
+      "website": "https://samsung.com"
+    },
+    {
+      "name": "Xiaomi",
+      "logo_url": "https://logo.clearbit.com/mi.com",
+      "website": "https://mi.com"
+    },
+    {
+      "name": "Lenovo",
+      "logo_url": "https://logo.clearbit.com/lenovo.com",
+      "website": "https://lenovo.com"
+    },
+    {
+      "name": "Bosch",
+      "logo_url": "https://logo.clearbit.com/bosch.com",
+      "website": "https://bosch.com"
+    },
+    {
+      "name": "LG",
+      "logo_url": "https://logo.clearbit.com/lg.com",
+      "website": "https://lg.com"
+    }
+  ],
+  "models": [
+    {
+      "brand_id": 1,
+      "category_id": 1,
+      "name": "iPhone 14",
+      "description": "Флагманский смартфон Apple",
+      "image_url": "https://example.com/iphone14.jpg"
+    },
+    {
+      "brand_id": 1,
+      "category_id": 1,
+      "name": "iPhone 13",
+      "description": "Предыдущая модель iPhone",
+      "image_url": "https://example.com/iphone13.jpg"
+    },
+    {
+      "brand_id": 2,
+      "category_id": 1,
+      "name": "Galaxy S23",
+      "description": "Флагманский смартфон Samsung",
+      "image_url": "https://example.com/galaxy-s23.jpg"
+    },
+    {
+      "brand_id": 2,
+      "category_id": 2,
+      "name": "Galaxy Book Pro",
+      "description": "Ультрабук Samsung",
+      "image_url": "https://example.com/galaxy-book-pro.jpg"
+    },
+    {
+      "brand_id": 4,
+      "category_id": 2,
+      "name": "ThinkPad X1 Carbon",
+      "description": "Бизнес-ноутбук Lenovo",
+      "image_url": "https://example.com/thinkpad-x1.jpg"
+    },
+    {
+      "brand_id": 5,
+      "category_id": 3,
+      "name": "Bosch Maxx 7",
+      "description": "Стиральная машина Bosch",
+      "image_url": "https://example.com/bosch-maxx7.jpg"
+    },
+    {
+      "brand_id": 6,
+      "category_id": 4,
+      "name": "LG OLED C2",
+      "description": "OLED телевизор LG",
+      "image_url": "https://example.com/lg-oled-c2.jpg"
+    }
+  ],
+  "problems": [
+    {
+      "category_id": 1,
+      "name": "Не заряжается",
+      "description": "Устройство не реагирует на подключение зарядки",
+      "severity": "high"
+    },
+    {
+      "category_id": 1,
+      "name": "Разбит экран",
+      "description": "Треснул или разбит дисплей устройства",
+      "severity": "medium"
+    },
+    {
+      "category_id": 1,
+      "name": "Не работает микрофон",
+      "description": "Проблемы с записью звука или голосовыми вызовами",
+      "severity": "medium"
+    },
+    {
+      "category_id": 1,
+      "name": "Перегревается",
+      "description": "Устройство сильно нагревается во время использования",
+      "severity": "high"
+    },
+    {
+      "category_id": 2,
+      "name": "Не включается",
+      "description": "Ноутбук не запускается при нажатии кнопки питания",
+      "severity": "critical"
+    },
+    {
+      "category_id": 2,
+      "name": "Медленно работает",
+      "description": "Система работает медленно, зависает",
+      "severity": "medium"
+    },
+    {
+      "category_id": 2,
+      "name": "Не работает Wi-Fi",
+      "description": "Проблемы с подключением к беспроводной сети",
+      "severity": "medium"
+    },
+    {
+      "category_id": 3,
+      "name": "Не стирает",
+      "description": "Стиральная машина не выполняет цикл стирки",
+      "severity": "high"
+    },
+    {
+      "category_id": 3,
+      "name": "Течет вода",
+      "description": "Обнаружены протечки воды",
+      "severity": "critical"
+    },
+    {
+      "category_id": 4,
+      "name": "Нет изображения",
+      "description": "Телевизор включается, но экран черный",
+      "severity": "high"
+    },
+    {
+      "category_id": 4,
+      "name": "Плохой звук",
+      "description": "Проблемы с качеством звука",
+      "severity": "medium"
+    }
+  ],
+  "instructions": [
+    {
+      "model_id": 1,
+      "problem_id": 1,
+      "title": "Замена разъема Lightning",
+      "description": "Пошаговая инструкция по замене разъема зарядки iPhone 14",
+      "difficulty": "hard",
+      "estimated_time": "1-2 часа",
+      "tools_required": ["Отвертка P2 Pentalobe", "Присоска для экрана", "Пластиковая лопатка", "Пинцет"],
+      "parts_required": ["Разъем Lightning", "Клей для экрана"],
+      "cost_estimate": 1500.00,
+      "is_pro_pretent": false,
+      "steps": [
+        {
+          "step": 1,
+          "title": "Отключение устройства",
+          "description": "Полностью выключите iPhone и убедитесь, что он разряжен",
+          "image": "https://example.com/step1.jpg"
+        },
+        {
+          "step": 2,
+          "title": "Снятие винтов",
+          "description": "Открутите два винта Pentalobe в нижней части устройства",
+          "image": "https://example.com/step2.jpg"
+        },
+        {
+          "step": 3,
+          "title": "Снятие экрана",
+          "description": "Используйте присоску и пластиковую лопатку для аккуратного снятия экрана",
+          "image": "https://example.com/step3.jpg",
+          "warning": "Будьте осторожны с кабелями дисплея!"
+        }
+      ],
+      "images": [
+        "https://example.com/instruction1.jpg",
+        "https://example.com/instruction2.jpg"
+      ],
+      "videos": [
+        "https://example.com/instruction-video.mp4"
+      ]
+    },
+    {
+      "model_id": 2,
+      "problem_id": 2,
+      "title": "Замена дисплея iPhone 13",
+      "description": "Руководство по замене разбитого экрана iPhone 13",
+      "difficulty": "expert",
+      "estimated_time": "2-3 часа",
+      "tools_required": ["Набор отверток", "Присоска", "Пластиковые лопатки", "Фен"],
+      "parts_required": ["Дисплей iPhone 13", "Клей B-7000"],
+      "cost_estimate": 8000.00,
+      "is_pro_pretent": true,
+      "steps": [
+        {
+          "step": 1,
+          "title": "Подготовка рабочего места",
+          "description": "Обеспечьте чистую, хорошо освещенную рабочую поверхность",
+          "image": "https://example.com/prep.jpg"
+        },
+        {
+          "step": 2,
+          "title": "Разогрев клея",
+          "description": "Используйте фен для размягчения клея по периметру экрана",
+          "image": "https://example.com/heat.jpg",
+          "warning": "Не перегревайте устройство!"
+        }
+      ],
+      "images": ["https://example.com/screen-repair1.jpg"],
+      "videos": ["https://example.com/screen-repair-video.mp4"]
+    },
+    {
+      "model_id": 5,
+      "problem_id": 5,
+      "title": "Диагностика проблем с питанием ThinkPad",
+      "description": "Пошаговая диагностика проблем с включением ноутбука",
+      "difficulty": "medium",
+      "estimated_time": "30-60 минут",
+      "tools_required": ["Отвертка", "Мультиметр"],
+      "parts_required": [],
+      "cost_estimate": 0.00,
+      "is_pro_pretent": false,
+      "steps": [
+        {
+          "step": 1,
+          "title": "Проверка питания",
+          "description": "Убедитесь, что адаптер питания подключен и индикатор горит",
+          "image": "https://example.com/power-check.jpg"
+        },
+        {
+          "step": 2,
+          "title": "Сброс питания",
+          "description": "Отключите адаптер, нажмите и удерживайте кнопку питания 15 секунд",
+          "image": "https://example.com/power-reset.jpg"
+        },
+        {
+          "step": 3,
+          "title": "Проверка батареи",
+          "description": "Извлеките батарею на 30 секунд, затем установите обратно",
+          "image": "https://example.com/battery-check.jpg"
+        }
+      ],
+      "images": ["https://example.com/thinkpad-diagnosis.jpg"],
+      "videos": []
+    }
+  ],
+  "partners": [
+    {
+      "name": "iFixit",
+      "website": "https://ru.ifixit.com",
+      "logo_url": "https://logo.clearbit.com/ifixit.com",
+      "description": "Оригинальные запчасти и инструменты для ремонта электроники"
+    },
+    {
+      "name": "AliExpress",
+      "website": "https://aliexpress.ru",
+      "logo_url": "https://logo.clearbit.com/aliexpress.com",
+      "description": "Широкий выбор запчастей по доступным ценам"
+    },
+    {
+      "name": "DNS",
+      "website": "https://dns-shop.ru",
+      "logo_url": "https://logo.clearbit.com/dns-shop.ru",
+      "description": "Российский магазин электроники и комплектующих"
+    },
+    {
+      "name": "Ozon",
+      "website": "https://ozon.ru",
+      "logo_url": "https://logo.clearbit.com/ozon.ru",
+      "description": "Маркетплейс с запчастями для техники"
+    }
+  ]
+}

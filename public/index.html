@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KЁLTISON - Мастер ремонта</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <h1>🔧 KЁLTISON</h1>
+                    <p>Мастер ремонта в вашем кармане</p>
+                </div>
+                <div class="user-info" id="userInfo" style="display: none;">
+                    <span id="userName"></span>
+                    <div class="subscription-badge" id="subscriptionBadge"></div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Welcome Screen -->
+            <div id="welcomeScreen" class="screen">
+                <div class="welcome-content">
+                    <h2>Добро пожаловать!</h2>
+                    <p id="welcomeMessage">Выберите тип устройства для ремонта:</p>
+                    
+                    <div class="device-categories">
+                        <button class="category-btn" data-category="1">
+                            <span class="category-icon">📱</span>
+                            <span class="category-name">Телефон</span>
+                        </button>
+                        <button class="category-btn" data-category="2">
+                            <span class="category-icon">💻</span>
+                            <span class="category-name">Ноутбук</span>
+                        </button>
+                        <button class="category-btn" data-category="3">
+                            <span class="category-icon">🧺</span>
+                            <span class="category-name">Бытовая техника</span>
+                        </button>
+                        <button class="category-btn" data-category="4">
+                            <span class="category-icon">📺</span>
+                            <span class="category-name">Телевизор</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brands Screen -->
+            <div id="brandsScreen" class="screen" style="display: none;">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="goBack()">← Назад</button>
+                    <h3 id="categoryTitle">Выберите бренд</h3>
+                </div>
+                <div class="brands-list" id="brandsList">
+                    <!-- Brands will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Models Screen -->
+            <div id="modelsScreen" class="screen" style="display: none;">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="goBack()">← Назад</button>
+                    <h3 id="brandTitle">Выберите модель</h3>
+                </div>
+                <div class="models-list" id="modelsList">
+                    <!-- Models will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Problems Screen -->
+            <div id="problemsScreen" class="screen" style="display: none;">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="goBack()">← Назад</button>
+                    <h3 id="modelTitle">Выберите проблему</h3>
+                </div>
+                <div class="problems-list" id="problemsList">
+                    <!-- Problems will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Instructions Screen -->
+            <div id="instructionsScreen" class="screen" style="display: none;">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="goBack()">← Назад</button>
+                    <h3>Инструкции по ремонту</h3>
+                </div>
+                <div class="instructions-list" id="instructionsList">
+                    <!-- Instructions will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Instruction Detail Screen -->
+            <div id="instructionDetailScreen" class="screen" style="display: none;">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="goBack()">← Назад</button>
+                    <h3>Инструкция</h3>
+                </div>
+                <div class="instruction-detail" id="instructionDetail">
+                    <!-- Instruction details will be loaded here -->
+                </div>
+            </div>
+
+            <!-- AI Assistant Screen -->
+            <div id="assistantScreen" class="screen" style="display: none;">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="goBack()">← Назад</button>
+                    <h3>🧰 Мастер КЁЛТИСОН</h3>
+                </div>
+                <div class="chat-container">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="message ai-message">
+                            <div class="message-content">
+                                Привет! Я мастер КЁЛТИСОН. Опишите проблему с вашим устройством, и я помогу найти решение!
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-input-container">
+                        <input type="text" id="chatInput" placeholder="Опишите проблему..." class="chat-input">
+                        <button id="sendMessageBtn" class="send-btn">📤</button>
+                    </div>
+                    <div class="chat-suggestions" id="chatSuggestions">
+                        <button class="suggestion-btn" onclick="sendSuggestion('Не заряжается телефон')">Не заряжается телефон</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('Разбит экран')">Разбит экран</button>
+                        <button class="suggestion-btn" onclick="sendSuggestion('Медленно работает')">Медленно работает</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Partners Screen -->
+            <div id="partnersScreen" class="screen" style="display: none;">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="goBack()">← Назад</button>
+                    <h3>Где купить запчасти</h3>
+                </div>
+                <div class="partners-list" id="partnersList">
+                    <!-- Partners will be loaded here -->
+                </div>
+            </div>
+
+            <!-- PRO Upgrade Screen -->
+            <div id="proUpgradeScreen" class="screen" style="display: none;">
+                <div class="screen-header">
+                    <button class="back-btn" onclick="goBack()">← Назад</button>
+                    <h3>💎 PRO-подписка</h3>
+                </div>
+                <div class="pro-content">
+                    <div class="pro-benefits">
+                        <h4>Что включено в PRO:</h4>
+                        <ul>
+                            <li>✅ Расширенные инструкции с видео</li>
+                            <li>✅ Персональные консультации ИИ-мастера</li>
+                            <li>✅ Приоритетная техническая поддержка</li>
+                            <li>✅ Эксклюзивные мастер-классы</li>
+                            <li>✅ Доступ к базе запчастей</li>
+                            <li>✅ Калькулятор стоимости ремонта</li>
+                        </ul>
+                    </div>
+                    <div class="pro-pricing">
+                        <div class="price">299₽/месяц</div>
+                        <div class="trial">Попробуйте бесплатно 7 дней!</div>
+                    </div>
+                    <button class="upgrade-btn" onclick="upgradeToPro()">
+                        💎 Оформить PRO-подписку
+                    </button>
+                </div>
+            </div>
+
+            <!-- Loading Screen -->
+            <div id="loadingScreen" class="screen loading" style="display: none;">
+                <div class="loading-content">
+                    <div class="spinner"></div>
+                    <p>Загружаем...</p>
+                </div>
+            </div>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <button class="nav-btn" onclick="showScreen('assistantScreen')">
+                <span class="nav-icon">🧰</span>
+                <span class="nav-label">Мастер</span>
+            </button>
+            <button class="nav-btn" onclick="showScreen('partnersScreen')">
+                <span class="nav-icon">🛒</span>
+                <span class="nav-label">Запчасти</span>
+            </button>
+            <button class="nav-btn" onclick="showScreen('proUpgradeScreen')">
+                <span class="nav-icon">💎</span>
+                <span class="nav-label">PRO</span>
+            </button>
+        </nav>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
