@@ -98,7 +98,7 @@ router.post('/webapp-init', async (req, res) => {
 });
 
 // Get current user profile
-router.get('/profile', require('./middleware/auth').verifyToken, async (req, res) => {
+router.get('/profile', require('../middleware/auth').verifyToken, async (req, res) => {
   try {
     const user = req.user;
     
