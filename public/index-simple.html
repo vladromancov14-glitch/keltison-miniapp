@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KЁLTISON Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--tg-theme-bg-color, #ffffff);
+            color: var(--tg-theme-text-color, #000000);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--tg-theme-hint-color, #999999);
+        }
+        
+        .back-btn {
+            background: var(--tg-theme-button-color, #007AFF);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .title {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 15px;
+            margin: 8px 0;
+            background: var(--tg-theme-button-color, #007AFF);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .btn:hover {
+            opacity: 0.8;
+            transform: translateY(-1px);
+        }
+        
+        .btn:active {
+            transform: translateY(0);
+        }
+        
+        .category-btn {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin: 8px 0;
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .category-btn:hover {
+            background: var(--tg-theme-button-color, #007AFF);
+            color: var(--tg-theme-button-text-color, #ffffff);
+        }
+        
+        .emoji {
+            font-size: 24px;
+            margin-right: 12px;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: var(--tg-theme-hint-color, #999999);
+        }
+        
+        .error {
+            background: #ff4444;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .success {
+            background: #44ff44;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: center;
+        }
+        
+        .chat-container {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border-top: 1px solid var(--tg-theme-hint-color, #999999);
+            padding: 15px;
+            display: none;
+        }
+        
+        .chat-container.active {
+            display: block;
+        }
+        
+        .chat-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid var(--tg-theme-hint-color, #999999);
+            border-radius: 8px;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        
+        .chat-messages {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-bottom: 10px;
+        }
+        
+        .message {
+            padding: 8px 12px;
+            margin: 4px 0;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        
+        .message.user {
+            background: var(--tg-theme-button-color, #007AFF);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            margin-left: auto;
+        }
+        
+        .message.bot {
+            background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+            color: var(--tg-theme-text-color, #000000);
+        }
+        
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: var(--tg-theme-bg-color, #ffffff);
+            border-top: 1px solid var(--tg-theme-hint-color, #999999);
+            padding: 10px;
+            display: flex;
+            justify-content: space-around;
+        }
+        
+        .nav-btn {
+            background: none;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+            color: var(--tg-theme-hint-color, #999999);
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .nav-btn.active {
+            color: var(--tg-theme-button-color, #007AFF);
+        }
+        
+        .nav-btn .icon {
+            font-size: 20px;
+            display: block;
+            margin-bottom: 4px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div id="welcomeScreen" class="screen active">
+            <div class="header">
+                <h1 class="title">🔧 KЁLTISON</h1>
+            </div>
+            <p style="margin-bottom: 20px; color: var(--tg-theme-hint-color, #999999);">
+                Мастер ремонта в вашем кармане
+            </p>
+            
+            <button class="category-btn" data-category="1">
+                <span class="emoji">📱</span>
+                <div>
+                    <div style="font-weight: 600;">Телефон</div>
+                    <div style="font-size: 14px; color: var(--tg-theme-hint-color, #999999);">Смартфоны и мобильные устройства</div>
+                </div>
+            </button>
+            
+            <button class="category-btn" data-category="2">
+                <span class="emoji">💻</span>
+                <div>
+                    <div style="font-weight: 600;">Ноутбук</div>
+                    <div style="font-size: 14px; color: var(--tg-theme-hint-color, #999999);">Ноутбуки и планшеты</div>
+                </div>
+            </button>
+            
+            <button class="category-btn" data-category="3">
+                <span class="emoji">🧺</span>
+                <div>
+                    <div style="font-weight: 600;">Бытовая техника</div>
+                    <div style="font-size: 14px; color: var(--tg-theme-hint-color, #999999);">Стиральные машины, холодильники</div>
+                </div>
+            </button>
+            
+            <button class="category-btn" data-category="4">
+                <span class="emoji">📺</span>
+                <div>
+                    <div style="font-weight: 600;">Телевизор</div>
+                    <div style="font-size: 14px; color: var(--tg-theme-hint-color, #999999);">Телевизоры и мониторы</div>
+                </div>
+            </button>
+        </div>
+
+        <!-- Brands Screen -->
+        <div id="brandsScreen" class="screen">
+            <div class="header">
+                <button class="back-btn" data-action="back">← Назад</button>
+                <h3 class="title" id="brandsTitle">Выберите бренд</h3>
+            </div>
+            <div id="brandsList">
+                <!-- Brands will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Models Screen -->
+        <div id="modelsScreen" class="screen">
+            <div class="header">
+                <button class="back-btn" data-action="back">← Назад</button>
+                <h3 class="title" id="modelsTitle">Выберите модель</h3>
+            </div>
+            <div id="modelsList">
+                <!-- Models will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Problems Screen -->
+        <div id="problemsScreen" class="screen">
+            <div class="header">
+                <button class="back-btn" data-action="back">← Назад</button>
+                <h3 class="title" id="problemsTitle">Выберите проблему</h3>
+            </div>
+            <div id="problemsList">
+                <!-- Problems will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Instructions Screen -->
+        <div id="instructionsScreen" class="screen">
+            <div class="header">
+                <button class="back-btn" data-action="back">← Назад</button>
+                <h3 class="title" id="instructionsTitle">Инструкции</h3>
+            </div>
+            <div id="instructionsList">
+                <!-- Instructions will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Chat Screen -->
+        <div id="chatScreen" class="screen">
+            <div class="header">
+                <button class="back-btn" data-action="back">← Назад</button>
+                <h3 class="title">🧰 Мастер КЁЛТИСОН</h3>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <div class="message bot">
+                    Привет! Я мастер КЁЛТИСОН. Опишите вашу проблему, и я помогу найти решение!
+                </div>
+            </div>
+            <div class="chat-container active">
+                <input type="text" class="chat-input" id="chatInput" placeholder="Опишите проблему...">
+                <button class="btn" data-action="send-message">Отправить</button>
+            </div>
+        </div>
+
+        <!-- Loading Screen -->
+        <div id="loadingScreen" class="screen">
+            <div class="loading">
+                <div style="font-size: 24px; margin-bottom: 10px;">⏳</div>
+                Загрузка...
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-btn active" data-screen="welcomeScreen">
+            <span class="icon">🏠</span>
+            Главная
+        </button>
+        <button class="nav-btn" data-screen="chatScreen">
+            <span class="icon">🧰</span>
+            Мастер
+        </button>
+    </div>
+
+    <script>
+        // Global variables
+        let tg = null;
+        let currentUser = null;
+        let navigationStack = ['welcomeScreen'];
+        let currentContext = {
+            category: null,
+            brand: null,
+            model: null,
+            problem: null
+        };
+
+        // Initialize Telegram WebApp
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded');
+            
+            // Check if running in Telegram WebApp
+            if (typeof window.Telegram !== 'undefined' && window.Telegram.WebApp) {
+                tg = window.Telegram.WebApp;
+                tg.ready();
+                tg.expand();
+                console.log('Telegram WebApp initialized');
+                
+                // Set theme
+                document.body.style.backgroundColor = tg.themeParams.bg_color || '#ffffff';
+                document.body.style.color = tg.themeParams.text_color || '#000000';
+            } else {
+                console.log('Running in development mode');
+            }
+            
+            // Initialize user
+            initUser();
+            
+            // Set up event listeners
+            setupEventListeners();
+        });
+
+        // Set up event listeners
+        function setupEventListeners() {
+            console.log('Setting up event listeners...');
+            
+            // Category buttons
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const categoryId = this.dataset.category;
+                    console.log('Category selected:', categoryId);
+                    selectCategory(categoryId);
+                });
+            });
+            
+            // Back buttons
+            document.querySelectorAll('.back-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    console.log('Back button clicked');
+                    goBack();
+                });
+            });
+            
+            // Navigation buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const screenId = this.dataset.screen;
+                    console.log('Navigation clicked:', screenId);
+                    showScreen(screenId);
+                });
+            });
+            
+            // Send message button
+            document.querySelectorAll('[data-action="send-message"]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    console.log('Send message clicked');
+                    sendMessage();
+                });
+            });
+            
+            // Chat input enter key
+            const chatInput = document.getElementById('chatInput');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+            
+            console.log('Event listeners set up successfully');
+        }
+
+        // Initialize user
+        async function initUser() {
+            try {
+                let initData = '';
+                
+                if (tg && tg.initData) {
+                    initData = tg.initData;
+                } else {
+                    // Development mode - create mock initData
+                    initData = 'user=' + encodeURIComponent(JSON.stringify({
+                        id: 123456789,
+                        first_name: 'Test',
+                        last_name: 'User',
+                        username: 'testuser'
+                    }));
+                }
+                
+                const response = await fetch('/api/auth/webapp-init', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ initData })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    currentUser = data.user;
+                    console.log('User initialized:', currentUser);
+                } else {
+                    console.error('Failed to initialize user');
+                }
+            } catch (error) {
+                console.error('Error initializing user:', error);
+            }
+        }
+
+        // Navigation functions
+        function showScreen(screenId) {
+            console.log('showScreen called with:', screenId);
+            
+            // Hide all screens
+            document.querySelectorAll('.screen').forEach(screen => {
+                screen.classList.remove('active');
+            });
+            
+            // Show target screen
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen) {
+                targetScreen.classList.add('active');
+                console.log('Showing screen:', screenId);
+                
+                // Update navigation stack
+                if (navigationStack.length === 0 || navigationStack[navigationStack.length - 1] !== screenId) {
+                    navigationStack.push(screenId);
+                }
+                console.log('Navigation stack:', navigationStack);
+            } else {
+                console.error('Screen not found:', screenId);
+                showScreen('welcomeScreen');
+            }
+            
+            // Update bottom navigation
+            updateBottomNav(screenId);
+        }
+
+        function updateBottomNav(activeScreen) {
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            if (activeScreen === 'welcomeScreen') {
+                document.querySelector('.nav-btn[onclick="showScreen(\'welcomeScreen\')"]').classList.add('active');
+            } else if (activeScreen === 'chatScreen') {
+                document.querySelector('.nav-btn[onclick="showScreen(\'chatScreen\')"]').classList.add('active');
+            }
+        }
+
+        function goBack() {
+            console.log('goBack called, navigationStack:', navigationStack);
+            
+            if (navigationStack.length > 1) {
+                navigationStack.pop(); // Remove current screen
+                const previousScreen = navigationStack[navigationStack.length - 1];
+                console.log('Going back to:', previousScreen);
+                showScreen(previousScreen);
+            } else {
+                console.log('Going to welcome screen');
+                showScreen('welcomeScreen');
+            }
+        }
+
+        // Make functions globally available
+        window.showScreen = showScreen;
+        window.goBack = goBack;
+
+        // Category selection
+        async function selectCategory(categoryId) {
+            console.log('selectCategory called with:', categoryId);
+            currentContext.category = categoryId;
+            
+            try {
+                showScreen('loadingScreen');
+                
+                const response = await fetch('/api/brands');
+                
+                if (response.ok) {
+                    const brands = await response.json();
+                    console.log('Brands loaded:', brands);
+                    displayBrands(brands);
+                    showScreen('brandsScreen');
+                    
+                    // Update title
+                    const categoryNames = {
+                        '1': 'Телефоны',
+                        '2': 'Ноутбуки',
+                        '3': 'Бытовая техника',
+                        '4': 'Телевизоры'
+                    };
+                    
+                    const titleElement = document.getElementById('brandsTitle');
+                    if (titleElement) {
+                        titleElement.textContent = `Выберите бренд для ${categoryNames[categoryId] || 'устройства'}:`;
+                    }
+                } else {
+                    console.error('Failed to load brands:', response.status);
+                    showError('Не удалось загрузить список брендов');
+                }
+            } catch (error) {
+                console.error('Error selecting category:', error);
+                showError('Произошла ошибка при загрузке брендов');
+            }
+        }
+
+        // Display brands
+        function displayBrands(brands) {
+            const brandsList = document.getElementById('brandsList');
+            brandsList.innerHTML = '';
+            
+            brands.forEach(brand => {
+                const brandBtn = document.createElement('button');
+                brandBtn.className = 'btn';
+                brandBtn.textContent = brand.name;
+                brandBtn.dataset.brand = brand.id;
+                brandBtn.addEventListener('click', function() {
+                    selectBrand(this.dataset.brand);
+                });
+                brandsList.appendChild(brandBtn);
+            });
+        }
+
+        // Brand selection
+        async function selectBrand(brandId) {
+            console.log('selectBrand called with:', brandId);
+            currentContext.brand = brandId;
+            
+            try {
+                showScreen('loadingScreen');
+                
+                const response = await fetch('/api/models');
+                
+                if (response.ok) {
+                    const models = await response.json();
+                    console.log('Models loaded:', models);
+                    displayModels(models);
+                    showScreen('modelsScreen');
+                    
+                    const titleElement = document.getElementById('modelsTitle');
+                    if (titleElement) {
+                        titleElement.textContent = 'Выберите модель:';
+                    }
+                } else {
+                    console.error('Failed to load models:', response.status);
+                    showError('Не удалось загрузить список моделей');
+                }
+            } catch (error) {
+                console.error('Error selecting brand:', error);
+                showError('Произошла ошибка при загрузке моделей');
+            }
+        }
+
+        // Display models
+        function displayModels(models) {
+            const modelsList = document.getElementById('modelsList');
+            modelsList.innerHTML = '';
+            
+            models.forEach(model => {
+                const modelBtn = document.createElement('button');
+                modelBtn.className = 'btn';
+                modelBtn.textContent = `${model.brand_name} ${model.name}`;
+                modelBtn.dataset.model = model.id;
+                modelBtn.addEventListener('click', function() {
+                    selectModel(this.dataset.model);
+                });
+                modelsList.appendChild(modelBtn);
+            });
+        }
+
+        // Model selection
+        async function selectModel(modelId) {
+            console.log('selectModel called with:', modelId);
+            currentContext.model = modelId;
+            
+            try {
+                showScreen('loadingScreen');
+                
+                const response = await fetch('/api/problems');
+                
+                if (response.ok) {
+                    const problems = await response.json();
+                    console.log('Problems loaded:', problems);
+                    displayProblems(problems);
+                    showScreen('problemsScreen');
+                    
+                    const titleElement = document.getElementById('problemsTitle');
+                    if (titleElement) {
+                        titleElement.textContent = 'Выберите проблему:';
+                    }
+                } else {
+                    console.error('Failed to load problems:', response.status);
+                    showError('Не удалось загрузить список проблем');
+                }
+            } catch (error) {
+                console.error('Error selecting model:', error);
+                showError('Произошла ошибка при загрузке проблем');
+            }
+        }
+
+        // Display problems
+        function displayProblems(problems) {
+            const problemsList = document.getElementById('problemsList');
+            problemsList.innerHTML = '';
+            
+            problems.forEach(problem => {
+                const problemBtn = document.createElement('button');
+                problemBtn.className = 'btn';
+                problemBtn.textContent = problem.name;
+                problemBtn.dataset.problem = problem.id;
+                problemBtn.addEventListener('click', function() {
+                    selectProblem(this.dataset.problem);
+                });
+                problemsList.appendChild(problemBtn);
+            });
+        }
+
+        // Problem selection
+        async function selectProblem(problemId) {
+            console.log('selectProblem called with:', problemId);
+            currentContext.problem = problemId;
+            
+            try {
+                showScreen('loadingScreen');
+                
+                const response = await fetch('/api/instructions');
+                
+                if (response.ok) {
+                    const instructions = await response.json();
+                    console.log('Instructions loaded:', instructions);
+                    displayInstructions(instructions);
+                    showScreen('instructionsScreen');
+                    
+                    const titleElement = document.getElementById('instructionsTitle');
+                    if (titleElement) {
+                        titleElement.textContent = 'Инструкции по ремонту:';
+                    }
+                } else {
+                    console.error('Failed to load instructions:', response.status);
+                    showError('Не удалось загрузить инструкции');
+                }
+            } catch (error) {
+                console.error('Error selecting problem:', error);
+                showError('Произошла ошибка при загрузке инструкций');
+            }
+        }
+
+        // Display instructions
+        function displayInstructions(instructions) {
+            const instructionsList = document.getElementById('instructionsList');
+            instructionsList.innerHTML = '';
+            
+            if (instructions.length === 0) {
+                instructionsList.innerHTML = '<div class="loading">Инструкции не найдены</div>';
+                return;
+            }
+            
+            instructions.forEach(instruction => {
+                const instructionDiv = document.createElement('div');
+                instructionDiv.style.cssText = `
+                    background: var(--tg-theme-secondary-bg-color, #f0f0f0);
+                    padding: 15px;
+                    margin: 8px 0;
+                    border-radius: 12px;
+                `;
+                
+                instructionDiv.innerHTML = `
+                    <h4 style="margin-bottom: 8px;">${instruction.title}</h4>
+                    <p style="color: var(--tg-theme-hint-color, #999999); margin-bottom: 8px;">${instruction.description}</p>
+                    <div style="font-size: 14px;">
+                        <div>⏱️ Время: ${instruction.estimated_time}</div>
+                        <div>💰 Стоимость: ${instruction.cost_estimate}₽</div>
+                        <div>🔧 Сложность: ${instruction.difficulty}</div>
+                    </div>
+                `;
+                
+                instructionsList.appendChild(instructionDiv);
+            });
+        }
+
+        // Chat functions
+        async function sendMessage() {
+            const input = document.getElementById('chatInput');
+            const message = input.value.trim();
+            
+            if (!message) return;
+            
+            // Add user message
+            addMessage(message, 'user');
+            input.value = '';
+            
+            try {
+                const response = await fetch('/api/assistant/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ message })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage(data.response, 'bot');
+                } else {
+                    addMessage('Извините, произошла ошибка. Попробуйте еще раз.', 'bot');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                addMessage('Извините, произошла ошибка. Попробуйте еще раз.', 'bot');
+            }
+        }
+
+        function addMessage(text, sender) {
+            const messagesContainer = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `message ${sender}`;
+            messageDiv.textContent = text;
+            messagesContainer.appendChild(messageDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        // Error handling
+        function showError(message) {
+            console.error('Error:', message);
+            
+            // Try to show alert using Telegram WebApp API
+            if (tg && tg.showAlert) {
+                try {
+                    tg.showAlert(message);
+                } catch (error) {
+                    console.log('Telegram alert not supported, using console');
+                }
+            } else {
+                // Fallback: show error in console and create visual indicator
+                const errorDiv = document.createElement('div');
+                errorDiv.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    left: 20px;
+                    right: 20px;
+                    background: #ff4444;
+                    color: white;
+                    padding: 15px;
+                    border-radius: 8px;
+                    z-index: 1000;
+                    text-align: center;
+                `;
+                errorDiv.textContent = message;
+                
+                document.body.appendChild(errorDiv);
+                
+                setTimeout(() => {
+                    errorDiv.remove();
+                }, 3000);
+            }
+        }
+
+        // Make functions globally available
+        window.selectCategory = selectCategory;
+        window.selectBrand = selectBrand;
+        window.selectModel = selectModel;
+        window.selectProblem = selectProblem;
+        window.sendMessage = sendMessage;
+    </script>
+</body>
+</html>

@@ -86,6 +86,62 @@ app.get('/api/instructions', (req, res) => {
   ]);
 });
 
+// Get specific instruction by ID
+app.get('/api/instructions/:id', (req, res) => {
+  const instructionId = req.params.id;
+  
+  const instruction = {
+    id: parseInt(instructionId),
+    model_id: 1,
+    problem_id: 1,
+    title: 'Замена разъема Lightning',
+    description: 'Пошаговая инструкция по замене разъема зарядки iPhone 14',
+    difficulty: 'hard',
+    estimated_time: '1-2 часа',
+    tools_required: ['Отвертка P2 Pentalobe', 'Присоска для экрана'],
+    parts_required: ['Разъем Lightning', 'Клей для экрана'],
+    cost_estimate: 1500.00,
+    is_pro_pretent: false,
+    model_name: 'iPhone 14',
+    brand_name: 'Apple',
+    problem_name: 'Не заряжается',
+    steps: [
+      {
+        step: 1,
+        title: 'Отключите устройство',
+        description: 'Полностью выключите iPhone и отсоедините все кабели',
+        image_url: null
+      },
+      {
+        step: 2,
+        title: 'Снимите винты',
+        description: 'Открутите два винта Pentalobe в нижней части устройства',
+        image_url: null
+      },
+      {
+        step: 3,
+        title: 'Откройте корпус',
+        description: 'Используйте присоску для экрана, чтобы аккуратно приподнять дисплей',
+        image_url: null
+      },
+      {
+        step: 4,
+        title: 'Замените разъем',
+        description: 'Отсоедините старый разъем и установите новый',
+        image_url: null
+      },
+      {
+        step: 5,
+        title: 'Соберите устройство',
+        description: 'Установите дисплей обратно и закрутите винты',
+        image_url: null
+      }
+    ]
+  };
+  
+  res.json(instruction);
+});
+
 app.get('/api/partners', (req, res) => {
   res.json([
     { id: 1, name: 'iFixit', website: 'https://ru.ifixit.com', logo_url: 'https://logo.clearbit.com/ifixit.com', description: 'Оригинальные запчасти и инструменты', is_active: true },
@@ -179,7 +235,7 @@ app.get('/health', (req, res) => {
 
 // Main page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index-simple.html'));
 });
 
 // Admin page

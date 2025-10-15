@@ -7,7 +7,8 @@
     "start": "node server-simple.js",
     "dev": "nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "test-server": "node test-server.js"
+    "test-server": "node test-server.js",
+    "bot": "node bot-runner.js"
   },
   "keywords": ["telegram", "webapp", "repair", "mini-app"],
   "author": "KЁLTISON Team",

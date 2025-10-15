@@ -105,48 +105,100 @@ function updateUserInfo() {
 
 // Initialize app
 function initializeApp() {
-    // Set up event listeners
-    setupEventListeners();
+    console.log('Initializing app...');
     
-    // Show welcome screen
-    showScreen('welcomeScreen');
-    
-    // Update welcome message
-    if (currentUser) {
-        document.getElementById('welcomeMessage').textContent = 
-            `Привет, ${currentUser.first_name}! Выберите тип устройства для ремонта:`;
+    try {
+        // Set up event listeners
+        setupEventListeners();
+        
+        // Initialize navigation stack
+        navigationStack = ['welcomeScreen'];
+        
+        // Show welcome screen
+        showScreen('welcomeScreen');
+        
+        // Update welcome message
+        if (currentUser) {
+            const welcomeElement = document.getElementById('welcomeMessage');
+            if (welcomeElement) {
+                welcomeElement.textContent = 
+                    `Привет, ${currentUser.first_name}! Выберите тип устройства для ремонта:`;
+            }
+        }
+        
+        console.log('App initialized successfully');
+    } catch (error) {
+        console.error('Error initializing app:', error);
     }
 }
 
 // Set up event listeners
 function setupEventListeners() {
-    // Category buttons
-    document.querySelectorAll('.category-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const categoryId = this.dataset.category;
-            selectCategory(categoryId);
+    console.log('Setting up event listeners...');
+    
+    try {
+        // Category buttons
+        document.querySelectorAll('.category-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const categoryId = this.dataset.category;
+                console.log('Category selected:', categoryId);
+                selectCategory(categoryId);
+            });
         });
-    });
-    
-    // Chat input
-    const chatInput = document.getElementById('chatInput');
-    const sendBtn = document.getElementById('sendMessageBtn');
-    
-    if (chatInput) {
-        chatInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
+        
+        // Brand buttons
+        document.querySelectorAll('.brand-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const brandId = this.dataset.brand;
+                console.log('Brand selected:', brandId);
+                selectBrand(brandId);
+            });
         });
-    }
-    
-    if (sendBtn) {
-        sendBtn.addEventListener('click', sendChatMessage);
+        
+        // Model buttons
+        document.querySelectorAll('.model-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const modelId = this.dataset.model;
+                console.log('Model selected:', modelId);
+                selectModel(modelId);
+            });
+        });
+        
+        // Problem buttons
+        document.querySelectorAll('.problem-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                const problemId = this.dataset.problem;
+                console.log('Problem selected:', problemId);
+                selectProblem(problemId);
+            });
+        });
+        
+        // Chat input
+        const chatInput = document.getElementById('chatInput');
+        const sendBtn = document.getElementById('sendMessageBtn');
+        
+        if (chatInput) {
+            chatInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    sendChatMessage();
+                }
+            });
+        }
+        
+        if (sendBtn) {
+            sendBtn.addEventListener('click', sendChatMessage);
+        }
+        
+        console.log('Event listeners set up successfully');
+    } catch (error) {
+        console.error('Error setting up event listeners:', error);
     }
 }
 
 // Navigation functions
 function showScreen(screenId) {
+    console.log('showScreen called with:', screenId);
+    
     // Hide all screens
     document.querySelectorAll('.screen').forEach(screen => {
         screen.style.display = 'none';
@@ -156,26 +208,43 @@ function showScreen(screenId) {
     const targetScreen = document.getElementById(screenId);
     if (targetScreen) {
         targetScreen.style.display = 'block';
+        console.log('Showing screen:', screenId);
         
         // Update navigation stack
-        if (navigationStack[navigationStack.length - 1] !== screenId) {
+        if (navigationStack.length === 0 || navigationStack[navigationStack.length - 1] !== screenId) {
             navigationStack.push(screenId);
         }
-    }
-}
-
-function goBack() {
-    if (navigationStack.length > 1) {
-        navigationStack.pop(); // Remove current screen
-        const previousScreen = navigationStack[navigationStack.length - 1];
-        showScreen(previousScreen);
+        console.log('Navigation stack:', navigationStack);
     } else {
+        console.error('Screen not found:', screenId);
+        // Fallback to welcome screen
         showScreen('welcomeScreen');
     }
 }
 
+// Make showScreen globally available
+window.showScreen = showScreen;
+
+function goBack() {
+    console.log('goBack called, navigationStack:', navigationStack);
+    
+    if (navigationStack.length > 1) {
+        navigationStack.pop(); // Remove current screen
+        const previousScreen = navigationStack[navigationStack.length - 1];
+        console.log('Going back to:', previousScreen);
+        showScreen(previousScreen);
+    } else {
+        console.log('Going to welcome screen');
+        showScreen('welcomeScreen');
+    }
+}
+
+// Make goBack globally available
+window.goBack = goBack;
+
 // Category selection
 async function selectCategory(categoryId) {
+    console.log('selectCategory called with:', categoryId);
     currentContext.category = categoryId;
     
     try {
@@ -197,8 +266,10 @@ async function selectCategory(categoryId) {
                 '3': 'Бытовая техника',
                 '4': 'Телевизоры'
             };
-            document.getElementById('categoryTitle').textContent = 
-                `Выберите бренд - ${categoryNames[categoryId]}`;
+            const titleElement = document.getElementById('brandsTitle');
+            if (titleElement) {
+                titleElement.textContent = `Выберите бренд для ${categoryNames[categoryId] || 'устройства'}:`;
+            }
         } else {
             showError('Ошибка загрузки брендов');
         }
