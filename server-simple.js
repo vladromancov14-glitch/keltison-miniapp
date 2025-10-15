@@ -41,20 +41,87 @@ app.get('/api/categories', (req, res) => {
 });
 
 app.get('/api/brands', (req, res) => {
-  res.json([
-    { id: 1, name: 'Apple', logo_url: 'https://logo.clearbit.com/apple.com', website: 'https://apple.com' },
-    { id: 2, name: 'Samsung', logo_url: 'https://logo.clearbit.com/samsung.com', website: 'https://samsung.com' },
-    { id: 3, name: 'Xiaomi', logo_url: 'https://logo.clearbit.com/mi.com', website: 'https://mi.com' },
-    { id: 4, name: 'Lenovo', logo_url: 'https://logo.clearbit.com/lenovo.com', website: 'https://lenovo.com' }
-  ]);
+  const categoryId = req.query.category_id;
+  
+  let brands = [];
+  
+  if (categoryId === '1') { // Телефоны
+    brands = [
+      { id: 1, name: 'Apple', logo_url: 'https://logo.clearbit.com/apple.com', website: 'https://apple.com' },
+      { id: 2, name: 'Samsung', logo_url: 'https://logo.clearbit.com/samsung.com', website: 'https://samsung.com' },
+      { id: 3, name: 'Xiaomi', logo_url: 'https://logo.clearbit.com/mi.com', website: 'https://mi.com' },
+      { id: 4, name: 'Huawei', logo_url: 'https://logo.clearbit.com/huawei.com', website: 'https://huawei.com' }
+    ];
+  } else if (categoryId === '2') { // Ноутбуки
+    brands = [
+      { id: 5, name: 'Apple', logo_url: 'https://logo.clearbit.com/apple.com', website: 'https://apple.com' },
+      { id: 6, name: 'Lenovo', logo_url: 'https://logo.clearbit.com/lenovo.com', website: 'https://lenovo.com' },
+      { id: 7, name: 'ASUS', logo_url: 'https://logo.clearbit.com/asus.com', website: 'https://asus.com' },
+      { id: 8, name: 'HP', logo_url: 'https://logo.clearbit.com/hp.com', website: 'https://hp.com' }
+    ];
+  } else if (categoryId === '3') { // Бытовая техника
+    brands = [
+      { id: 9, name: 'Bosch', logo_url: 'https://logo.clearbit.com/bosch.com', website: 'https://bosch.com' },
+      { id: 10, name: 'Samsung', logo_url: 'https://logo.clearbit.com/samsung.com', website: 'https://samsung.com' },
+      { id: 11, name: 'LG', logo_url: 'https://logo.clearbit.com/lg.com', website: 'https://lg.com' },
+      { id: 12, name: 'Whirlpool', logo_url: 'https://logo.clearbit.com/whirlpool.com', website: 'https://whirlpool.com' }
+    ];
+  } else if (categoryId === '4') { // Телевизоры
+    brands = [
+      { id: 13, name: 'Samsung', logo_url: 'https://logo.clearbit.com/samsung.com', website: 'https://samsung.com' },
+      { id: 14, name: 'LG', logo_url: 'https://logo.clearbit.com/lg.com', website: 'https://lg.com' },
+      { id: 15, name: 'Sony', logo_url: 'https://logo.clearbit.com/sony.com', website: 'https://sony.com' },
+      { id: 16, name: 'TCL', logo_url: 'https://logo.clearbit.com/tcl.com', website: 'https://tcl.com' }
+    ];
+  } else {
+    // Все бренды если не указана категория
+    brands = [
+      { id: 1, name: 'Apple', logo_url: 'https://logo.clearbit.com/apple.com', website: 'https://apple.com' },
+      { id: 2, name: 'Samsung', logo_url: 'https://logo.clearbit.com/samsung.com', website: 'https://samsung.com' },
+      { id: 3, name: 'Xiaomi', logo_url: 'https://logo.clearbit.com/mi.com', website: 'https://mi.com' },
+      { id: 4, name: 'Huawei', logo_url: 'https://logo.clearbit.com/huawei.com', website: 'https://huawei.com' }
+    ];
+  }
+  
+  res.json(brands);
 });
 
 app.get('/api/models', (req, res) => {
-  res.json([
-    { id: 1, brand_id: 1, category_id: 1, name: 'iPhone 14', description: 'Флагманский смартфон Apple', brand_name: 'Apple', category_name: 'Телефон' },
-    { id: 2, brand_id: 2, category_id: 1, name: 'Galaxy S23', description: 'Флагманский смартфон Samsung', brand_name: 'Samsung', category_name: 'Телефон' },
-    { id: 3, brand_id: 1, category_id: 2, name: 'MacBook Pro', description: 'Профессиональный ноутбук Apple', brand_name: 'Apple', category_name: 'Ноутбук' }
-  ]);
+  const brandId = req.query.brand_id;
+  
+  let models = [];
+  
+  if (brandId === '1') { // Apple телефоны
+    models = [
+      { id: 1, brand_id: 1, category_id: 1, name: 'iPhone 14', description: 'Флагманский смартфон Apple', brand_name: 'Apple', category_name: 'Телефон' },
+      { id: 2, brand_id: 1, category_id: 1, name: 'iPhone 13', description: 'Предыдущее поколение iPhone', brand_name: 'Apple', category_name: 'Телефон' },
+      { id: 3, brand_id: 1, category_id: 1, name: 'iPhone SE', description: 'Компактный iPhone', brand_name: 'Apple', category_name: 'Телефон' }
+    ];
+  } else if (brandId === '2') { // Samsung телефоны
+    models = [
+      { id: 4, brand_id: 2, category_id: 1, name: 'Galaxy S23', description: 'Флагманский смартфон Samsung', brand_name: 'Samsung', category_name: 'Телефон' },
+      { id: 5, brand_id: 2, category_id: 1, name: 'Galaxy A54', description: 'Средний класс Samsung', brand_name: 'Samsung', category_name: 'Телефон' },
+      { id: 6, brand_id: 2, category_id: 1, name: 'Galaxy Note', description: 'Samsung с S-Pen', brand_name: 'Samsung', category_name: 'Телефон' }
+    ];
+  } else if (brandId === '9') { // Bosch бытовая техника
+    models = [
+      { id: 7, brand_id: 9, category_id: 3, name: 'Стиральная машина WAU', description: 'Стиральная машина Bosch', brand_name: 'Bosch', category_name: 'Бытовая техника' },
+      { id: 8, brand_id: 9, category_id: 3, name: 'Холодильник KGN', description: 'Холодильник Bosch', brand_name: 'Bosch', category_name: 'Бытовая техника' }
+    ];
+  } else if (brandId === '13') { // Samsung телевизоры
+    models = [
+      { id: 9, brand_id: 13, category_id: 4, name: 'QLED Q80C', description: 'Телевизор Samsung QLED', brand_name: 'Samsung', category_name: 'Телевизор' },
+      { id: 10, brand_id: 13, category_id: 4, name: 'Neo QLED QN90C', description: 'Премиум телевизор Samsung', brand_name: 'Samsung', category_name: 'Телевизор' }
+    ];
+  } else {
+    // Дефолтные модели
+    models = [
+      { id: 1, brand_id: 1, category_id: 1, name: 'iPhone 14', description: 'Флагманский смартфон Apple', brand_name: 'Apple', category_name: 'Телефон' },
+      { id: 2, brand_id: 2, category_id: 1, name: 'Galaxy S23', description: 'Флагманский смартфон Samsung', brand_name: 'Samsung', category_name: 'Телефон' }
+    ];
+  }
+  
+  res.json(models);
 });
 
 app.get('/api/problems', (req, res) => {
@@ -235,7 +302,7 @@ app.get('/health', (req, res) => {
 
 // Main page
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'public', 'index-simple.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Admin page

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>KЁLTISON Mini App</title>
+    <title>KЁLTISON Mini App - Тест</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
@@ -23,42 +23,6 @@
         .container {
             max-width: 400px;
             margin: 0 auto;
-        }
-        
-        .screen {
-            display: none;
-        }
-        
-        .screen.active {
-            display: block;
-        }
-        
-        .header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid var(--tg-theme-hint-color, #999999);
-        }
-        
-        .back-btn {
-            background: var(--tg-theme-button-color, #007AFF);
-            color: var(--tg-theme-button-text-color, #ffffff);
-            border: none;
-            padding: 8px 16px;
-            border-radius: 8px;
-            font-size: 14px;
-            cursor: pointer;
-            margin-right: 10px;
-        }
-        
-        .back-btn:hover {
-            opacity: 0.8;
-        }
-        
-        .title {
-            font-size: 18px;
-            font-weight: 600;
         }
         
         .btn {
@@ -104,6 +68,42 @@
         .emoji {
             font-size: 24px;
             margin-right: 12px;
+        }
+        
+        .back-btn {
+            background: var(--tg-theme-button-color, #007AFF);
+            color: var(--tg-theme-button-text-color, #ffffff);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        
+        .back-btn:hover {
+            opacity: 0.8;
+        }
+        
+        .screen {
+            display: none;
+        }
+        
+        .screen.active {
+            display: block;
+        }
+        
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--tg-theme-hint-color, #999999);
+        }
+        
+        .title {
+            font-size: 18px;
+            font-weight: 600;
         }
         
         .loading {
@@ -263,39 +263,6 @@
             </div>
             <div id="brandsList">
                 <!-- Brands will be loaded here -->
-            </div>
-        </div>
-
-        <!-- Models Screen -->
-        <div id="modelsScreen" class="screen">
-            <div class="header">
-                <button class="back-btn" data-action="back">← Назад</button>
-                <h3 class="title" id="modelsTitle">Выберите модель</h3>
-            </div>
-            <div id="modelsList">
-                <!-- Models will be loaded here -->
-            </div>
-        </div>
-
-        <!-- Problems Screen -->
-        <div id="problemsScreen" class="screen">
-            <div class="header">
-                <button class="back-btn" data-action="back">← Назад</button>
-                <h3 class="title" id="problemsTitle">Выберите проблему</h3>
-            </div>
-            <div id="problemsList">
-                <!-- Problems will be loaded here -->
-            </div>
-        </div>
-
-        <!-- Instructions Screen -->
-        <div id="instructionsScreen" class="screen">
-            <div class="header">
-                <button class="back-btn" data-action="back">← Назад</button>
-                <h3 class="title" id="instructionsTitle">Инструкции</h3>
-            </div>
-            <div id="instructionsList">
-                <!-- Instructions will be loaded here -->
             </div>
         </div>
 
@@ -517,10 +484,6 @@
             }
         }
 
-        // Make functions globally available
-        window.showScreen = showScreen;
-        window.goBack = goBack;
-
         // Category selection
         async function selectCategory(categoryId) {
             console.log('selectCategory called with:', categoryId);
@@ -568,168 +531,11 @@
                 const brandBtn = document.createElement('button');
                 brandBtn.className = 'btn';
                 brandBtn.textContent = brand.name;
-                brandBtn.dataset.brand = brand.id;
                 brandBtn.addEventListener('click', function() {
-                    selectBrand(this.dataset.brand);
+                    console.log('Brand clicked:', brand.name);
+                    showSuccess(`Выбран бренд: ${brand.name}`);
                 });
                 brandsList.appendChild(brandBtn);
-            });
-        }
-
-        // Brand selection
-        async function selectBrand(brandId) {
-            console.log('selectBrand called with:', brandId);
-            currentContext.brand = brandId;
-            
-            try {
-                showScreen('loadingScreen');
-                
-                const response = await fetch('/api/models');
-                
-                if (response.ok) {
-                    const models = await response.json();
-                    console.log('Models loaded:', models);
-                    displayModels(models);
-                    showScreen('modelsScreen');
-                    
-                    const titleElement = document.getElementById('modelsTitle');
-                    if (titleElement) {
-                        titleElement.textContent = 'Выберите модель:';
-                    }
-                } else {
-                    console.error('Failed to load models:', response.status);
-                    showError('Не удалось загрузить список моделей');
-                }
-            } catch (error) {
-                console.error('Error selecting brand:', error);
-                showError('Произошла ошибка при загрузке моделей');
-            }
-        }
-
-        // Display models
-        function displayModels(models) {
-            const modelsList = document.getElementById('modelsList');
-            modelsList.innerHTML = '';
-            
-            models.forEach(model => {
-                const modelBtn = document.createElement('button');
-                modelBtn.className = 'btn';
-                modelBtn.textContent = `${model.brand_name} ${model.name}`;
-                modelBtn.dataset.model = model.id;
-                modelBtn.addEventListener('click', function() {
-                    selectModel(this.dataset.model);
-                });
-                modelsList.appendChild(modelBtn);
-            });
-        }
-
-        // Model selection
-        async function selectModel(modelId) {
-            console.log('selectModel called with:', modelId);
-            currentContext.model = modelId;
-            
-            try {
-                showScreen('loadingScreen');
-                
-                const response = await fetch('/api/problems');
-                
-                if (response.ok) {
-                    const problems = await response.json();
-                    console.log('Problems loaded:', problems);
-                    displayProblems(problems);
-                    showScreen('problemsScreen');
-                    
-                    const titleElement = document.getElementById('problemsTitle');
-                    if (titleElement) {
-                        titleElement.textContent = 'Выберите проблему:';
-                    }
-                } else {
-                    console.error('Failed to load problems:', response.status);
-                    showError('Не удалось загрузить список проблем');
-                }
-            } catch (error) {
-                console.error('Error selecting model:', error);
-                showError('Произошла ошибка при загрузке проблем');
-            }
-        }
-
-        // Display problems
-        function displayProblems(problems) {
-            const problemsList = document.getElementById('problemsList');
-            problemsList.innerHTML = '';
-            
-            problems.forEach(problem => {
-                const problemBtn = document.createElement('button');
-                problemBtn.className = 'btn';
-                problemBtn.textContent = problem.name;
-                problemBtn.dataset.problem = problem.id;
-                problemBtn.addEventListener('click', function() {
-                    selectProblem(this.dataset.problem);
-                });
-                problemsList.appendChild(problemBtn);
-            });
-        }
-
-        // Problem selection
-        async function selectProblem(problemId) {
-            console.log('selectProblem called with:', problemId);
-            currentContext.problem = problemId;
-            
-            try {
-                showScreen('loadingScreen');
-                
-                const response = await fetch('/api/instructions');
-                
-                if (response.ok) {
-                    const instructions = await response.json();
-                    console.log('Instructions loaded:', instructions);
-                    displayInstructions(instructions);
-                    showScreen('instructionsScreen');
-                    
-                    const titleElement = document.getElementById('instructionsTitle');
-                    if (titleElement) {
-                        titleElement.textContent = 'Инструкции по ремонту:';
-                    }
-                } else {
-                    console.error('Failed to load instructions:', response.status);
-                    showError('Не удалось загрузить инструкции');
-                }
-            } catch (error) {
-                console.error('Error selecting problem:', error);
-                showError('Произошла ошибка при загрузке инструкций');
-            }
-        }
-
-        // Display instructions
-        function displayInstructions(instructions) {
-            const instructionsList = document.getElementById('instructionsList');
-            instructionsList.innerHTML = '';
-            
-            if (instructions.length === 0) {
-                instructionsList.innerHTML = '<div class="loading">Инструкции не найдены</div>';
-                return;
-            }
-            
-            instructions.forEach(instruction => {
-                const instructionDiv = document.createElement('div');
-                instructionDiv.style.cssText = `
-                    background: var(--tg-theme-secondary-bg-color, #f0f0f0);
-                    padding: 15px;
-                    margin: 8px 0;
-                    border-radius: 12px;
-                `;
-                
-                instructionDiv.innerHTML = `
-                    <h4 style="margin-bottom: 8px;">${instruction.title}</h4>
-                    <p style="color: var(--tg-theme-hint-color, #999999); margin-bottom: 8px;">${instruction.description}</p>
-                    <div style="font-size: 14px;">
-                        <div>⏱️ Время: ${instruction.estimated_time}</div>
-                        <div>💰 Стоимость: ${instruction.cost_estimate}₽</div>
-                        <div>🔧 Сложность: ${instruction.difficulty}</div>
-                    </div>
-                `;
-                
-                instructionsList.appendChild(instructionDiv);
             });
         }
 
@@ -778,43 +584,39 @@
         function showError(message) {
             console.error('Error:', message);
             
-            // Try to show alert using Telegram WebApp API
-            if (tg && tg.showAlert) {
-                try {
-                    tg.showAlert(message);
-                } catch (error) {
-                    console.log('Telegram alert not supported, using console');
-                }
-            } else {
-                // Fallback: show error in console and create visual indicator
-                const errorDiv = document.createElement('div');
-                errorDiv.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    left: 20px;
-                    right: 20px;
-                    background: #ff4444;
-                    color: white;
-                    padding: 15px;
-                    border-radius: 8px;
-                    z-index: 1000;
-                    text-align: center;
-                `;
-                errorDiv.textContent = message;
-                
-                document.body.appendChild(errorDiv);
-                
-                setTimeout(() => {
-                    errorDiv.remove();
-                }, 3000);
-            }
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error';
+            errorDiv.textContent = message;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(errorDiv, container.firstChild);
+            
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 3000);
+            
+            showScreen('welcomeScreen');
+        }
+
+        function showSuccess(message) {
+            console.log('Success:', message);
+            
+            const successDiv = document.createElement('div');
+            successDiv.className = 'success';
+            successDiv.textContent = message;
+            
+            const container = document.querySelector('.container');
+            container.insertBefore(successDiv, container.firstChild);
+            
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
         }
 
         // Make functions globally available
+        window.showScreen = showScreen;
+        window.goBack = goBack;
         window.selectCategory = selectCategory;
-        window.selectBrand = selectBrand;
-        window.selectModel = selectModel;
-        window.selectProblem = selectProblem;
         window.sendMessage = sendMessage;
     </script>
 </body>

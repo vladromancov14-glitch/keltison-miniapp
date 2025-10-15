@@ -833,3 +833,68 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     };
 });
+
+// Fix event listeners for data attributes
+document.addEventListener('DOMContentLoaded', function() {
+    // Back buttons
+    document.querySelectorAll('[data-action="back"]').forEach(btn => {
+        btn.addEventListener('click', goBack);
+    });
+    
+    // Category buttons
+    document.querySelectorAll('.category-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const categoryId = this.dataset.category;
+            selectCategory(categoryId);
+        });
+    });
+    
+    // Brand buttons
+    document.querySelectorAll('.brand-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const brandId = this.dataset.brand;
+            selectBrand(brandId);
+        });
+    });
+    
+    // Model buttons
+    document.querySelectorAll('.model-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const modelId = this.dataset.model;
+            selectModel(modelId);
+        });
+    });
+    
+    // Problem buttons
+    document.querySelectorAll('.problem-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const problemId = this.dataset.problem;
+            selectProblem(problemId);
+        });
+    });
+    
+    // Navigation buttons
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const screenId = this.dataset.screen;
+            showScreen(screenId);
+        });
+    });
+    
+    // Action buttons
+    document.querySelectorAll('[data-action="send-message"]').forEach(btn => {
+        btn.addEventListener('click', sendMessage);
+    });
+    
+    // Partner buttons
+    document.querySelectorAll('[data-action="partner"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const url = this.dataset.url;
+            if (url) {
+                window.open(url, '_blank');
+            }
+        });
+    });
+    
+    console.log('Event listeners fixed');
+});
