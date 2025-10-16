@@ -251,7 +251,9 @@ async function selectCategory(categoryId) {
         showLoading(true);
         
         const response = await apiCall('/api/brands', {
-            category_id: categoryId
+            query: {
+                category_id: categoryId
+            }
         });
         
         if (response.ok) {
@@ -308,8 +310,10 @@ async function selectBrand(brandId, brandName) {
         showLoading(true);
         
         const response = await apiCall('/api/models', {
-            brand_id: brandId,
-            category_id: currentContext.category
+            query: {
+                brand_id: brandId,
+                category_id: currentContext.category
+            }
         });
         
         if (response.ok) {
@@ -849,6 +853,13 @@ function showSuccess(message) {
 async function apiCall(endpoint, options = {}) {
     const token = localStorage.getItem('keltison_token');
     
+    // Обрабатываем query параметры
+    let url = endpoint;
+    if (options.query) {
+        const params = new URLSearchParams(options.query);
+        url += '?' + params.toString();
+    }
+    
     const defaultOptions = {
         headers: {
             'Content-Type': 'application/json',
@@ -857,12 +868,13 @@ async function apiCall(endpoint, options = {}) {
     };
     
     const finalOptions = { ...defaultOptions, ...options };
+    delete finalOptions.query; // Убираем query из options
     
     if (finalOptions.body && typeof finalOptions.body === 'object') {
         finalOptions.body = JSON.stringify(finalOptions.body);
     }
     
-    return fetch(endpoint, finalOptions);
+    return fetch(url, finalOptions);
 }
 
 // Initialize partners when screen is shown
