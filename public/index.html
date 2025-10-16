@@ -126,9 +126,9 @@
                         <button id="sendMessageBtn" class="send-btn">📤</button>
                     </div>
                     <div class="chat-suggestions" id="chatSuggestions">
-                        <button class="suggestion-btn" onclick="sendSuggestion('Не заряжается телефон')">Не заряжается телефон</button>
-                        <button class="suggestion-btn" onclick="sendSuggestion('Разбит экран')">Разбит экран</button>
-                        <button class="suggestion-btn" onclick="sendSuggestion('Медленно работает')">Медленно работает</button>
+                        <button class="suggestion-btn" data-action="suggestion" data-text="Не заряжается телефон">Не заряжается телефон</button>
+                        <button class="suggestion-btn" data-action="suggestion" data-text="Разбит экран">Разбит экран</button>
+                        <button class="suggestion-btn" data-action="suggestion" data-text="Медленно работает">Медленно работает</button>
                     </div>
                 </div>
             </div>
@@ -166,7 +166,7 @@
                         <div class="price">299₽/месяц</div>
                         <div class="trial">Попробуйте бесплатно 7 дней!</div>
                     </div>
-                    <button class="upgrade-btn" onclick="upgradeToPro()">
+                    <button class="upgrade-btn" data-action="upgrade-pro">
                         💎 Оформить PRO-подписку
                     </button>
                 </div>
@@ -183,15 +183,15 @@
 
         <!-- Bottom Navigation -->
         <nav class="bottom-nav">
-            <button class="nav-btn" onclick="showScreen('assistantScreen')">
+            <button class="nav-btn" data-screen="assistantScreen">
                 <span class="nav-icon">🧰</span>
                 <span class="nav-label">Мастер</span>
             </button>
-            <button class="nav-btn" onclick="showScreen('partnersScreen')">
+            <button class="nav-btn" data-screen="partnersScreen">
                 <span class="nav-icon">🛒</span>
                 <span class="nav-label">Запчасти</span>
             </button>
-            <button class="nav-btn" onclick="showScreen('proUpgradeScreen')">
+            <button class="nav-btn" data-screen="proUpgradeScreen">
                 <span class="nav-icon">💎</span>
                 <span class="nav-label">PRO</span>
             </button>

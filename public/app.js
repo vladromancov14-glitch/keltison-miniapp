@@ -289,7 +289,7 @@ function displayBrands(brands) {
     brands.forEach(brand => {
         const brandItem = document.createElement('div');
         brandItem.className = 'list-item';
-        brandItem.onclick = () => selectBrand(brand.id, brand.name);
+        brandItem.addEventListener('click', () => selectBrand(brand.id, brand.name));
         
         brandItem.innerHTML = `
             <h4>${brand.name}</h4>
@@ -339,7 +339,7 @@ function displayModels(models) {
     models.forEach(model => {
         const modelItem = document.createElement('div');
         modelItem.className = 'list-item';
-        modelItem.onclick = () => selectModel(model.id, model.name);
+        modelItem.addEventListener('click', () => selectModel(model.id, model.name));
         
         modelItem.innerHTML = `
             <h4>${model.name}</h4>
@@ -388,7 +388,7 @@ function displayProblems(problems) {
     problems.forEach(problem => {
         const problemItem = document.createElement('div');
         problemItem.className = 'list-item';
-        problemItem.onclick = () => selectProblem(problem.id, problem.name);
+        problemItem.addEventListener('click', () => selectProblem(problem.id, problem.name));
         
         const severityColors = {
             low: '#27ae60',
@@ -455,7 +455,7 @@ function displayInstructions(instructions) {
             <div class="error-message">
                 <h4>Инструкции не найдены</h4>
                 <p>К сожалению, для данной комбинации устройства и проблемы пока нет инструкций.</p>
-                <button class="action-btn secondary" onclick="showScreen('assistantScreen')">
+                <button class="action-btn secondary" data-screen="assistantScreen">
                     🧰 Обратиться к мастеру
                 </button>
             </div>
@@ -466,7 +466,7 @@ function displayInstructions(instructions) {
     instructions.forEach(instruction => {
         const instructionItem = document.createElement('div');
         instructionItem.className = 'list-item';
-        instructionItem.onclick = () => viewInstruction(instruction.id);
+        instructionItem.addEventListener('click', () => viewInstruction(instruction.id));
         
         const difficultyColors = {
             easy: '#27ae60',
@@ -623,10 +623,10 @@ function displayInstructionDetail(instruction) {
         </div>
         
         <div class="instruction-actions">
-            <button class="action-btn" onclick="showScreen('partnersScreen')">
+            <button class="action-btn" data-screen="partnersScreen">
                 🛒 Где купить запчасти
             </button>
-            <button class="action-btn secondary" onclick="showScreen('assistantScreen')">
+            <button class="action-btn secondary" data-screen="assistantScreen">
                 🧰 Помощь мастера
             </button>
         </div>
@@ -648,7 +648,7 @@ function showProRestriction(error) {
                     <span style="margin-left: 1rem; color: #666;">⏱️ ${error.preview.estimated_time}</span>
                 </div>
             </div>
-            <button class="upgrade-btn" onclick="showScreen('proUpgradeScreen')">
+            <button class="upgrade-btn" data-screen="proUpgradeScreen">
                 💎 Оформить PRO-подписку
             </button>
         </div>
@@ -723,7 +723,7 @@ function updateChatSuggestions(suggestions) {
         const btn = document.createElement('button');
         btn.className = 'suggestion-btn';
         btn.textContent = suggestion;
-        btn.onclick = () => sendSuggestion(suggestion);
+        btn.addEventListener('click', () => sendSuggestion(suggestion));
         suggestionsContainer.appendChild(btn);
     });
 }
@@ -757,7 +757,7 @@ function displayPartners(partners) {
             <h4>${partner.name}</h4>
             <p>${partner.description || 'Надежный поставщик запчастей'}</p>
             <div style="margin-top: 1rem;">
-                <button class="action-btn" onclick="window.open('${partner.website}', '_blank')">
+                <button class="action-btn" data-action="partner" data-url="${partner.website}">
                     🛒 Перейти в магазин
                 </button>
             </div>
@@ -770,11 +770,7 @@ function displayPartners(partners) {
 // PRO upgrade
 function upgradeToPro() {
     // In a real implementation, this would integrate with a payment system
-    if (tg && tg.showAlert) {
-        tg.showAlert('Для оформления PRO-подписки обратитесь в поддержку: @keltison_support');
-    } else {
-        alert('Для оформления PRO-подписки обратитесь в поддержку: @keltison_support');
-    }
+    showSuccess('Для оформления PRO-подписки обратитесь в поддержку: @keltison_support');
 }
 
 // Utility functions
@@ -786,19 +782,67 @@ function showLoading(show) {
 }
 
 function showError(message) {
-    if (tg && tg.showAlert) {
-        tg.showAlert(message);
-    } else {
-        alert(message);
-    }
+    console.error('Error:', message);
+    
+    // Создаем визуальное уведомление об ошибке
+    const errorDiv = document.createElement('div');
+    errorDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #ff4444;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        font-size: 14px;
+        max-width: 80%;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    `;
+    errorDiv.textContent = message;
+    
+    document.body.appendChild(errorDiv);
+    
+    // Убираем через 3 секунды
+    setTimeout(() => {
+        if (errorDiv.parentNode) {
+            errorDiv.parentNode.removeChild(errorDiv);
+        }
+    }, 3000);
 }
 
 function showSuccess(message) {
-    if (tg && tg.showAlert) {
-        tg.showAlert(message);
-    } else {
-        alert(message);
-    }
+    console.log('Success:', message);
+    
+    // Создаем визуальное уведомление об успехе
+    const successDiv = document.createElement('div');
+    successDiv.style.cssText = `
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #44ff44;
+        color: white;
+        padding: 15px 20px;
+        border-radius: 8px;
+        z-index: 10000;
+        font-size: 14px;
+        max-width: 80%;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    `;
+    successDiv.textContent = message;
+    
+    document.body.appendChild(successDiv);
+    
+    // Убираем через 3 секунды
+    setTimeout(() => {
+        if (successDiv.parentNode) {
+            successDiv.parentNode.removeChild(successDiv);
+        }
+    }, 3000);
 }
 
 // API call helper
@@ -893,6 +937,23 @@ document.addEventListener('DOMContentLoaded', function() {
             if (url) {
                 window.open(url, '_blank');
             }
+        });
+    });
+    
+    // Suggestion buttons
+    document.querySelectorAll('[data-action="suggestion"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const text = this.dataset.text;
+            if (text) {
+                sendSuggestion(text);
+            }
+        });
+    });
+    
+    // Upgrade button
+    document.querySelectorAll('[data-action="upgrade-pro"]').forEach(btn => {
+        btn.addEventListener('click', function() {
+            upgradeToPro();
         });
     });
     
