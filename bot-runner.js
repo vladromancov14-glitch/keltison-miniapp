@@ -46,7 +46,7 @@ bot.onText(/\/start/, (msg) => {
     inline_keyboard: [[
       {
         text: '🔧 Открыть КЁЛТИСОН',
-        web_app: { url: process.env.WEBAPP_URL || 'http://localhost:3000' }
+        web_app: { url: process.env.WEBAPP_URL || 'https://keltison-miniapp-5.onrender.com' }
       }
     ]]
   };
@@ -97,7 +97,7 @@ bot.onText(/\/help/, (msg) => {
     inline_keyboard: [
       [{
         text: '🔧 Открыть КЁЛТИСОН',
-        web_app: { url: process.env.WEBAPP_URL || 'http://localhost:3000' }
+        web_app: { url: process.env.WEBAPP_URL || 'https://keltison-miniapp-5.onrender.com' }
       }],
       [{
         text: '💎 PRO-подписка',
@@ -126,7 +126,7 @@ bot.onText(/\/webapp/, (msg) => {
     inline_keyboard: [[
       {
         text: '🔧 Открыть КЁЛТИСОН',
-        web_app: { url: process.env.WEBAPP_URL || 'http://localhost:3000' }
+        web_app: { url: process.env.WEBAPP_URL || 'https://keltison-miniapp-5.onrender.com' }
       }
     ]]
   };
@@ -170,7 +170,7 @@ bot.on('callback_query', (callbackQuery) => {
         inline_keyboard: [
           [{
             text: '🔧 Открыть КЁЛТИСОН',
-            web_app: { url: process.env.WEBAPP_URL || 'http://localhost:3000' }
+            web_app: { url: process.env.WEBAPP_URL || 'https://keltison-miniapp-5.onrender.com' }
           }],
           [{
             text: '📞 Поддержка',
@@ -209,7 +209,7 @@ bot.on('message', (msg) => {
       inline_keyboard: [[
         {
           text: '🔧 Открыть КЁЛТИСОН',
-          web_app: { url: process.env.WEBAPP_URL || 'http://localhost:3000' }
+          web_app: { url: process.env.WEBAPP_URL || 'https://keltison-miniapp-5.onrender.com' }
         }
       ]]
     };

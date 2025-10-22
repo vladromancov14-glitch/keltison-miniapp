@@ -554,31 +554,355 @@ app.get('/api/partners', (req, res) => {
 // API для магазинов запчастей по городам
 app.get('/api/parts/stores', (req, res) => {
   const city = req.query.city;
+  console.log('🔍 Запрос магазинов для города:', city);
   
+  // Реальные города из сайтов магазинов
   const storesByCity = {
-    'Казань': [
-      { id: 1, name: 'Запчасти-Казань', address: 'ул. Баумана, 20', phone: '+7 (843) 111-22-33', website: 'https://zapchasti-kazan.ru' },
-      { id: 2, name: 'ТехноМаркет', address: 'пр. Победы, 30', phone: '+7 (843) 222-33-44', website: 'https://technomarket.ru' },
-      { id: 3, name: 'Электроника-Плюс', address: 'ул. Кремлевская, 12', phone: '+7 (843) 333-44-55', website: 'https://electronics-plus.ru' }
+    // TAGGSM города
+    'Адлер': [
+      { id: 1, name: 'Taggsm', address: 'Адлер', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 2, name: 'GreenSpark', address: 'Адлер', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 3, name: 'Liberty', address: 'Адлер', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Армавир': [
+      { id: 4, name: 'Taggsm', address: 'Армавир', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Архангельск': [
+      { id: 5, name: 'Taggsm', address: 'Архангельск', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Астрахань': [
+      { id: 6, name: 'Taggsm', address: 'Астрахань', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 7, name: 'GreenSpark', address: 'Астрахань', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Владивосток': [
+      { id: 8, name: 'Taggsm', address: 'Владивосток', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Владикавказ': [
+      { id: 9, name: 'Taggsm', address: 'Владикавказ', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 10, name: 'GreenSpark', address: 'Владикавказ', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Волгоград': [
+      { id: 11, name: 'Taggsm', address: 'Волгоград', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 12, name: 'GreenSpark', address: 'Волгоград', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 13, name: 'Liberty', address: 'Волгоград', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Волгодонск': [
+      { id: 14, name: 'Taggsm', address: 'Волгодонск', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 15, name: 'GreenSpark', address: 'Волгодонск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Геленджик': [
+      { id: 16, name: 'Taggsm', address: 'Геленджик', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Грозный': [
+      { id: 17, name: 'Taggsm', address: 'Грозный', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Калининград': [
+      { id: 18, name: 'Taggsm', address: 'Калининград', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 19, name: 'GreenSpark', address: 'Калининград', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 20, name: 'Liberty', address: 'Калининград', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Краснодар': [
+      { id: 21, name: 'Taggsm', address: 'Краснодар «Гавр.»', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 22, name: 'Taggsm', address: 'Краснодар «Ставр.»', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 23, name: 'GreenSpark', address: 'Краснодар', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 24, name: 'Liberty', address: 'Краснодар', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Мариуполь': [
+      { id: 25, name: 'Taggsm', address: 'Мариуполь', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Мелитополь': [
+      { id: 26, name: 'Taggsm', address: 'Мелитополь', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
     ],
     'Москва': [
-      { id: 4, name: 'Запчасти-Москва', address: 'ул. Арбат, 15', phone: '+7 (495) 111-22-33', website: 'https://zapchasti-moscow.ru' },
-      { id: 5, name: 'ТехноСервис', address: 'пр. Мира, 25', phone: '+7 (495) 222-33-44', website: 'https://technoservice.ru' }
+      { id: 27, name: 'Taggsm', address: 'Москва', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 28, name: 'GreenSpark', address: 'Москва', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 29, name: 'Liberty', address: 'Москва', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Мурманск': [
+      { id: 36, name: 'Taggsm', address: 'Мурманск', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 37, name: 'GreenSpark', address: 'Мурманск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 38, name: 'Liberty', address: 'Мурманск', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Новороссийск': [
+      { id: 39, name: 'Taggsm', address: 'Новороссийск', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 40, name: 'GreenSpark', address: 'Новороссийск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 41, name: 'Liberty', address: 'Новороссийск', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Ростов-на-Дону': [
+      { id: 42, name: 'Taggsm', address: 'Ростов-на-Дону', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 43, name: 'GreenSpark', address: 'Ростов-на-Дону', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 44, name: 'Liberty', address: 'Ростов-на-Дону', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Самара': [
+      { id: 45, name: 'Taggsm', address: 'Самара', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 46, name: 'GreenSpark', address: 'Самара', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 47, name: 'Liberty', address: 'Самара', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
     ],
     'Санкт-Петербург': [
-      { id: 6, name: 'Запчасти-СПб', address: 'Невский пр., 50', phone: '+7 (812) 111-22-33', website: 'https://zapchasti-spb.ru' },
-      { id: 7, name: 'Электро-Мир', address: 'ул. Литейный, 30', phone: '+7 (812) 222-33-44', website: 'https://electro-mir.ru' }
+      { id: 48, name: 'Taggsm', address: 'Санкт-Петербург', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 49, name: 'GreenSpark', address: 'Санкт-Петербург', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 50, name: 'Liberty', address: 'Санкт-Петербург (Дыбенко)', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' },
+      { id: 51, name: 'Liberty', address: 'Санкт-Петербург (Комендантский)', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' },
+      { id: 52, name: 'Liberty', address: 'Санкт-Петербург (Московская)', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' },
+      { id: 53, name: 'Liberty', address: 'Санкт-Петербург (Просвещение)', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' },
+      { id: 54, name: 'Liberty', address: 'Санкт-Петербург (Садовая)', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' },
+      { id: 55, name: 'Liberty', address: 'Санкт-Петербург (Юнона)', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Саратов': [
+      { id: 56, name: 'Taggsm', address: 'Саратов', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 57, name: 'GreenSpark', address: 'Саратов', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 58, name: 'Liberty', address: 'Саратов', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Севастополь': [
+      { id: 59, name: 'Taggsm', address: 'Севастополь', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Симферополь': [
+      { id: 60, name: 'Taggsm', address: 'Симферополь', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 61, name: 'Liberty', address: 'Симферополь', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Сочи': [
+      { id: 62, name: 'Taggsm', address: 'Сочи', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 63, name: 'GreenSpark', address: 'Сочи', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 64, name: 'Liberty', address: 'Сочи', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Ставрополь': [
+      { id: 65, name: 'Taggsm', address: 'Ставрополь «Лерм.»', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 66, name: 'Taggsm', address: 'Ставрополь «Туха.»', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 67, name: 'GreenSpark', address: 'Ставрополь', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 68, name: 'Liberty', address: 'Ставрополь', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Сургут': [
+      { id: 69, name: 'Taggsm', address: 'Сургут', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Сызрань': [
+      { id: 70, name: 'Taggsm', address: 'Сызрань', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Таганрог': [
+      { id: 71, name: 'Taggsm', address: 'Таганрог — «Централ. склад TAGGSM»', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    'Тольятти': [
+      { id: 72, name: 'Taggsm', address: 'Тольятти', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 73, name: 'Liberty', address: 'Тольятти', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Улан-Удэ': [
+      { id: 74, name: 'Taggsm', address: 'Улан-Удэ', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 75, name: 'GreenSpark', address: 'Улан-Удэ', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 76, name: 'Liberty', address: 'Улан-Удэ', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Ульяновск': [
+      { id: 77, name: 'Taggsm', address: 'Ульяновск', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 78, name: 'GreenSpark', address: 'Ульяновск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 79, name: 'Liberty', address: 'Ульяновск', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Хабаровск': [
+      { id: 80, name: 'Taggsm', address: 'Хабаровск', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 81, name: 'GreenSpark', address: 'Хабаровск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Челябинск': [
+      { id: 82, name: 'Taggsm', address: 'Челябинск', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 83, name: 'GreenSpark', address: 'Челябинск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 84, name: 'Liberty', address: 'Челябинск', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Чита': [
+      { id: 85, name: 'Taggsm', address: 'Чита', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' },
+      { id: 86, name: 'GreenSpark', address: 'Чита', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Южно-Сахалинск': [
+      { id: 87, name: 'Taggsm', address: 'Южно-Сахалинск', phone: '+7 (909) 420-29-40', website: 'https://taggsm.ru' }
+    ],
+    
+    // Дополнительные города GreenSpark
+    'Абакан': [
+      { id: 88, name: 'GreenSpark', address: 'Абакан', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Барнаул': [
+      { id: 89, name: 'GreenSpark', address: 'Барнаул', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Белгород': [
+      { id: 90, name: 'GreenSpark', address: 'Белгород', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Брянск': [
+      { id: 91, name: 'GreenSpark', address: 'Брянск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Вологда': [
+      { id: 92, name: 'GreenSpark', address: 'Вологда', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Воронеж': [
+      { id: 93, name: 'GreenSpark', address: 'Воронеж', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 94, name: 'Liberty', address: 'Воронеж', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Екатеринбург': [
+      { id: 95, name: 'GreenSpark', address: 'Екатеринбург', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 96, name: 'Liberty', address: 'Екатеринбург', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' },
+      { id: 97, name: 'Liberty', address: 'Екатеринбург Север', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Иваново': [
+      { id: 98, name: 'GreenSpark', address: 'Иваново', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Иркутск': [
+      { id: 99, name: 'GreenSpark', address: 'Иркутск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Йошкар-Ола': [
+      { id: 100, name: 'GreenSpark', address: 'Йошкар-Ола', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Казань': [
+      { id: 101, name: 'GreenSpark', address: 'Казань', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 102, name: 'Liberty', address: 'Казань', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Каменск-Шахтинский': [
+      { id: 103, name: 'GreenSpark', address: 'Каменск-Шахтинский', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Киров': [
+      { id: 104, name: 'GreenSpark', address: 'Киров', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 105, name: 'Liberty', address: 'Киров', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Комсомольск-на-Амуре': [
+      { id: 106, name: 'GreenSpark', address: 'Комсомольск-на-Амуре', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Кострома': [
+      { id: 107, name: 'GreenSpark', address: 'Кострома', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Курск': [
+      { id: 108, name: 'GreenSpark', address: 'Курск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 109, name: 'Liberty', address: 'Курск', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Лесной': [
+      { id: 110, name: 'GreenSpark', address: 'Лесной', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Липецк': [
+      { id: 111, name: 'GreenSpark', address: 'Липецк', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 112, name: 'Liberty', address: 'Липецк', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Магнитогорск': [
+      { id: 113, name: 'GreenSpark', address: 'Магнитогорск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 114, name: 'Liberty', address: 'Магнитогорск', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Майкоп': [
+      { id: 115, name: 'GreenSpark', address: 'Майкоп', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Набережные Челны': [
+      { id: 116, name: 'GreenSpark', address: 'Набережные Челны', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 117, name: 'Liberty', address: 'Набережные Челны', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Нефтекамск': [
+      { id: 118, name: 'GreenSpark', address: 'Нефтекамск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Нижний Тагил': [
+      { id: 119, name: 'GreenSpark', address: 'Нижний Тагил', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Ноябрьск': [
+      { id: 120, name: 'GreenSpark', address: 'Ноябрьск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Оренбург': [
+      { id: 121, name: 'GreenSpark', address: 'Оренбург', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 122, name: 'Liberty', address: 'Оренбург', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Орск': [
+      { id: 123, name: 'GreenSpark', address: 'Орск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Пенза': [
+      { id: 124, name: 'GreenSpark', address: 'Пенза', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 125, name: 'Liberty', address: 'Пенза', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Пермь': [
+      { id: 126, name: 'GreenSpark', address: 'Пермь', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 127, name: 'Liberty', address: 'Пермь', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Подольск': [
+      { id: 128, name: 'GreenSpark', address: 'Подольск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Псков': [
+      { id: 129, name: 'GreenSpark', address: 'Псков', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Россошь': [
+      { id: 130, name: 'GreenSpark', address: 'Россошь', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Рубцовск': [
+      { id: 131, name: 'GreenSpark', address: 'Рубцовск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Рязань': [
+      { id: 132, name: 'GreenSpark', address: 'Рязань', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 133, name: 'Liberty', address: 'Рязань', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Саранск': [
+      { id: 134, name: 'GreenSpark', address: 'Саранск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Смоленск': [
+      { id: 135, name: 'GreenSpark', address: 'Смоленск', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Старый Оскол': [
+      { id: 136, name: 'GreenSpark', address: 'Старый Оскол', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Стерлитамак': [
+      { id: 137, name: 'GreenSpark', address: 'Стерлитамак', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Сыктывкар': [
+      { id: 138, name: 'GreenSpark', address: 'Сыктывкар', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Тамбов': [
+      { id: 139, name: 'GreenSpark', address: 'Тамбов', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Тверь': [
+      { id: 140, name: 'GreenSpark', address: 'Тверь', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 141, name: 'Liberty', address: 'Тверь', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Тула': [
+      { id: 142, name: 'GreenSpark', address: 'Тула', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 143, name: 'Liberty', address: 'Тула', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Тюмень': [
+      { id: 144, name: 'GreenSpark', address: 'Тюмень', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 145, name: 'Liberty', address: 'Тюмень', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Уфа': [
+      { id: 146, name: 'GreenSpark', address: 'Уфа', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 147, name: 'Liberty', address: 'Уфа', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Ухта': [
+      { id: 148, name: 'GreenSpark', address: 'Ухта', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Чебоксары': [
+      { id: 149, name: 'GreenSpark', address: 'Чебоксары', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 150, name: 'Liberty', address: 'Чебоксары', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Череповец': [
+      { id: 151, name: 'GreenSpark', address: 'Череповец', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' }
+    ],
+    'Ярославль': [
+      { id: 152, name: 'GreenSpark', address: 'Ярославль', phone: '+7 (800) 700-29-40', website: 'https://green-spark.ru' },
+      { id: 153, name: 'Liberty', address: 'Ярославль', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    
+    // Дополнительные города Liberty
+    'Великий Новгород': [
+      { id: 154, name: 'Liberty', address: 'Великий Новгород', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Владимир': [
+      { id: 155, name: 'Liberty', address: 'Владимир', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Ижевск': [
+      { id: 156, name: 'Liberty', address: 'Ижевск', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Махачкала': [
+      { id: 157, name: 'Liberty', address: 'Махачкала', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Новосибирск': [
+      { id: 158, name: 'Liberty', address: 'Новосибирск', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
+    ],
+    'Омск': [
+      { id: 159, name: 'Liberty', address: 'Омск', phone: '+7 (800) 700-29-40', website: 'https://liberti.ru' }
     ]
   };
   
   if (city && storesByCity[city]) {
+    console.log('✅ Найдены магазины для города:', city, 'количество:', storesByCity[city].length);
     res.json(storesByCity[city]);
   } else {
-    // Если город не найден, возвращаем общие магазины
+    console.log('❌ Город не найден:', city, 'возвращаем маркетплейсы');
+    // Если город не найден, возвращаем маркетплейсы
     res.json([
-      { id: 8, name: 'Wildberries', address: 'Онлайн', phone: '8-800-555-55-55', website: 'https://wildberries.ru' },
-      { id: 9, name: 'Ozon', address: 'Онлайн', phone: '8-800-234-55-55', website: 'https://ozon.ru' },
-      { id: 10, name: 'Яндекс.Маркет', address: 'Онлайн', phone: '8-800-555-77-77', website: 'https://market.yandex.ru' }
+      { id: 160, name: 'Wildberries', address: 'Онлайн', phone: '8-800-555-55-55', website: 'https://wildberries.ru' },
+      { id: 161, name: 'Ozon', address: 'Онлайн', phone: '8-800-234-55-55', website: 'https://ozon.ru' }
     ]);
   }
 });

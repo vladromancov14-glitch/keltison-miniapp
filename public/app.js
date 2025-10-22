@@ -568,11 +568,26 @@ function displayInstructions(instructions) {
             <div class="error-message">
                 <h4>Инструкции не найдены</h4>
                 <p>К сожалению, для данной комбинации устройства и проблемы пока нет инструкций.</p>
-                <button class="action-btn secondary" data-screen="assistantScreen">
-                    🧰 Обратиться к мастеру
+                <button class="action-btn secondary" id="masterBtn">
+                    💬 Написать мастеру
                 </button>
             </div>
         `;
+        
+        // Добавляем обработчик для кнопки мастера
+        const masterBtn = document.getElementById('masterBtn');
+        if (masterBtn) {
+            masterBtn.addEventListener('click', () => {
+                // Открываем чат с мастером в Telegram
+                if (window.Telegram && window.Telegram.WebApp) {
+                    window.Telegram.WebApp.openLink('https://t.me/KELTISON');
+                } else {
+                    // Fallback для браузера
+                    window.open('https://t.me/KELTISON', '_blank');
+                }
+            });
+        }
+        
         return;
     }
     
@@ -781,14 +796,33 @@ function displayInstructionDetail(instruction) {
         </div>
         
         <div class="instruction-actions">
-            <button class="action-btn" data-screen="partnersScreen">
+            <button class="action-btn" id="partsBtn">
                 🛒 Где купить запчасти
             </button>
-            <button class="action-btn secondary" data-screen="assistantScreen">
-                🧰 Помощь мастера
+            <button class="action-btn secondary" id="masterHelpBtn">
+                💬 Написать мастеру
             </button>
         </div>
     `;
+    
+    // Добавляем обработчики для кнопок
+    const partsBtn = document.getElementById('partsBtn');
+    if (partsBtn) {
+        partsBtn.addEventListener('click', () => showScreen('partnersScreen'));
+    }
+    
+    const masterHelpBtn = document.getElementById('masterHelpBtn');
+    if (masterHelpBtn) {
+        masterHelpBtn.addEventListener('click', () => {
+            // Открываем чат с мастером в Telegram
+            if (window.Telegram && window.Telegram.WebApp) {
+                window.Telegram.WebApp.openLink('https://t.me/KELTISON');
+            } else {
+                // Fallback для браузера
+                window.open('https://t.me/KELTISON', '_blank');
+            }
+        });
+    }
 }
 
 // Show PRO restriction
@@ -990,9 +1024,9 @@ function displayStores(city, stores) {
         item.className = 'list-item';
         item.innerHTML = `
             <h4>${store.name}</h4>
-            <p>Надежный магазин запчастей</p>
+            <p>${store.address}</p>
             <div style="margin-top: 1rem;">
-                <button class="action-btn" data-action="partner" data-url="${store.url}">🛒 Перейти</button>
+                <button class="action-btn" data-action="partner" data-url="${store.website}">🛒 Перейти</button>
             </div>
         `;
         // attach opener for this dynamic button

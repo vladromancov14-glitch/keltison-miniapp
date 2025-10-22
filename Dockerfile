@@ -1,36 +1,26 @@
-# KЁLTISON Mini App Dockerfile
+# Используем официальный Node.js образ
 FROM node:18-alpine
 
-# Set working directory
+# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Install system dependencies
-RUN apk add --no-cache \
-    postgresql-client \
-    curl
-
-# Copy package files
+# Копируем package.json и package-lock.json (если есть)
 COPY package*.json ./
 
-# Install dependencies
+# Устанавливаем зависимости
 RUN npm ci --only=production
 
-# Copy application code
+# Копируем остальные файлы приложения
 COPY . .
 
-# Create uploads directory
+# Создаем директорию для загруженных файлов
 RUN mkdir -p uploads
 
-# Set environment variables
-ENV NODE_ENV=production
-ENV PORT=3000
-
-# Expose port
+# Открываем порт
 EXPOSE 3000
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:3000/health || exit 1
+# Устанавливаем переменную окружения для порта
+ENV PORT=3000
 
-# Start application
+# Запускаем приложение
 CMD ["npm", "start"]
