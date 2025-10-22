@@ -702,35 +702,34 @@ function displayInstructionDetail(instruction) {
         stepsHtml = `
             <div class="instruction-steps">
                 <h4>Пошаговая инструкция:</h4>
-                ${instruction.steps.map((step, index) => `
-                    <div class="step">
-                        <div class="step-number">Шаг ${step.step || index + 1}</div>
-                        <div class="step-title">${step.title}</div>
-                        <div class="step-description">${step.description}</div>
-                        ${step.warning ? `<div class="step-warning">⚠️ ${step.warning}</div>` : ''}
-                    </div>
-                `).join('')}
+                ${instruction.steps.map((step, index) => {
+                    let stepMediaHtml = '';
+                    if (step.photos && step.photos.length > 0) {
+                        stepMediaHtml = `
+                            <div class="step-media">
+                                ${step.photos.map(photo => `
+                                    <img src="${photo.url}" alt="${photo.originalname}" style="max-width: 100%; border-radius: 6px; margin: 0.25rem 0;">
+                                `).join('')}
+                            </div>
+                        `;
+                    }
+                    
+                    return `
+                        <div class="step">
+                            <div class="step-content">
+                                <div class="step-text">
+                                    <div class="step-number">Шаг ${step.step || index + 1}</div>
+                                    <div class="step-title">${step.title}</div>
+                                    <div class="step-description">${step.description}</div>
+                                    ${step.warning ? `<div class="step-warning">⚠️ ${step.warning}</div>` : ''}
+                                </div>
+                                ${stepMediaHtml}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
             </div>
         `;
-    }
-    
-    let stepMediaHtml = '';
-    if (instruction.steps && instruction.steps.length > 0) {
-        stepMediaHtml = instruction.steps.map((step, index) => {
-            if (step.photos && step.photos.length > 0) {
-                return `
-                    <div class="step-media">
-                        <h5>Фото к шагу ${step.step || index + 1}:</h5>
-                        <div class="step-photos">
-                            ${step.photos.map(photo => `
-                                <img src="${photo.url}" alt="${photo.originalname}" style="max-width: 150px; border-radius: 4px; margin: 0.25rem;">
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            }
-            return '';
-        }).join('');
     }
     
     let toolsHtml = '';
@@ -791,7 +790,6 @@ function displayInstructionDetail(instruction) {
         
         <div class="instruction-content">
             ${stepsHtml}
-            ${stepMediaHtml}
             ${mediaHtml}
         </div>
         
@@ -1008,7 +1006,7 @@ function displayStores(city, stores) {
 
     // Add change-city control at top
     const header = document.createElement('div');
-    header.className = 'list-item';
+    header.className = 'list-item city-info';
     header.innerHTML = `
         <h4>Ваш город: ${city}</h4>
         <div style="margin-top: 0.5rem;">

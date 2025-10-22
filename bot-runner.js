@@ -11,6 +11,7 @@ if (!token) {
 
 console.log('🤖 Запуск Telegram бота...');
 console.log('🔑 Токен:', token.substring(0, 10) + '...');
+console.log('🌐 WebApp URL из .env:', process.env.WEBAPP_URL);
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -223,7 +224,7 @@ bot.on('message', (msg) => {
 // Успешный запуск
 console.log('✅ Бот успешно запущен!');
 console.log('📱 Напишите боту /start для тестирования');
-console.log('🌐 WebApp URL:', process.env.WEBAPP_URL || 'http://localhost:3000');
+console.log('🌐 WebApp URL:', process.env.WEBAPP_URL || 'https://keltison-miniapp-6.onrender.com');
 console.log('');
 console.log('Для остановки нажмите Ctrl+C');
 
