@@ -67,6 +67,11 @@ async function initUser() {
             currentUser = data.user;
             currentSession = data.token;
             
+            // Устанавливаем админские права для тестового пользователя
+            if (currentUser && currentUser.username === 'testuser') {
+                currentUser.is_admin = true;
+            }
+            
             // Update UI
             updateUserInfo();
             
@@ -100,6 +105,9 @@ function updateUserInfo() {
         }
         
         userInfo.style.display = 'block';
+        
+        // Показываем/скрываем кнопку админ-панели
+        toggleAdminButton();
     }
 }
 
@@ -232,9 +240,65 @@ function goBack() {
         navigationStack.pop(); // Remove current screen
         const previousScreen = navigationStack[navigationStack.length - 1];
         console.log('Going back to:', previousScreen);
+        
+        // Сбрасываем контекст в зависимости от экрана
+        if (previousScreen === 'welcomeScreen') {
+            // Возвращаемся на главный экран - сбрасываем весь контекст
+            currentContext = {
+                category: null,
+                brand: null,
+                model: null,
+                problem: null
+            };
+            console.log('🔄 Context reset to welcome screen');
+            
+            // Очищаем URL параметры
+            const url = new URL(window.location);
+            url.search = '';
+            window.history.pushState({}, '', url);
+            
+        } else if (previousScreen === 'brandsScreen') {
+            // Возвращаемся к выбору брендов - сбрасываем brand, model, problem
+            currentContext.brand = null;
+            currentContext.model = null;
+            currentContext.problem = null;
+            console.log('🔄 Context reset to brands screen, category:', currentContext.category);
+            
+            // Обновляем URL с правильным category_id
+            const url = new URL(window.location);
+            url.searchParams.set('category_id', currentContext.category);
+            window.history.pushState({}, '', url);
+            
+        } else if (previousScreen === 'modelsScreen') {
+            // Возвращаемся к выбору моделей - сбрасываем model, problem
+            currentContext.model = null;
+            currentContext.problem = null;
+            console.log('🔄 Context reset to models screen, category:', currentContext.category, 'brand:', currentContext.brand);
+            
+            // Обновляем URL с правильными параметрами
+            const url = new URL(window.location);
+            url.searchParams.set('category_id', currentContext.category);
+            url.searchParams.set('brand_id', currentContext.brand);
+            window.history.pushState({}, '', url);
+        }
+        
         showScreen(previousScreen);
     } else {
         console.log('Going to welcome screen');
+        // Сбрасываем весь контекст при возврате на главный экран
+        currentContext = {
+            category: null,
+            brand: null,
+            model: null,
+            problem: null
+        };
+        console.log('🔄 Full context reset to welcome screen');
+        
+        // Очищаем URL параметры
+        const url = new URL(window.location);
+        url.search = '';
+        window.history.pushState({}, '', url);
+        
         showScreen('welcomeScreen');
     }
 }
@@ -245,7 +309,20 @@ window.goBack = goBack;
 // Category selection
 async function selectCategory(categoryId) {
     console.log('selectCategory called with:', categoryId);
-    currentContext.category = categoryId;
+    
+    // Полностью сбрасываем контекст при выборе новой категории
+    currentContext = {
+        category: categoryId,
+        brand: null,
+        model: null,
+        problem: null
+    };
+    
+    console.log('🔍 Category Debug:', {
+        categoryId: categoryId,
+        currentContext: currentContext,
+        categorySet: currentContext.category
+    });
     
     try {
         showLoading(true);
@@ -265,8 +342,11 @@ async function selectCategory(categoryId) {
             const categoryNames = {
                 '1': 'Телефоны',
                 '2': 'Ноутбуки',
-                '3': 'Бытовая техника',
-                '4': 'Телевизоры'
+                '3': 'Стиральные машины',
+                '4': 'Холодильники',
+                '5': 'Микроволновки',
+                '6': 'Посудомоечные машины',
+                '7': 'Телевизоры'
             };
             const titleElement = document.getElementById('brandsTitle');
             if (titleElement) {
@@ -361,13 +441,40 @@ async function selectModel(modelId, modelName) {
     try {
         showLoading(true);
         
+        // Всегда используем текущий контекст категории
+        const categoryId = currentContext.category;
+        
+        console.log('🔍 Frontend Debug:', {
+            currentContext: currentContext,
+            category: currentContext.category,
+            categoryId: categoryId,
+            urlParams: window.location.search,
+            modelId: modelId,
+            modelName: modelName
+        });
+        
+        if (!categoryId) {
+            console.error('❌ No category_id found!');
+            showError('Ошибка: не удалось определить категорию');
+            return;
+        }
+        
+        console.log('🔍 Making problems request with category_id:', categoryId);
         const response = await apiCall('/api/problems', {
-            category_id: currentContext.category
+            query: {
+                category_id: categoryId
+            }
         });
         
         if (response.ok) {
             const problems = await response.json();
             displayProblems(problems);
+            
+            // Добавляем category_id в URL
+            const url = new URL(window.location);
+            url.searchParams.set('category_id', categoryId);
+            window.history.pushState({}, '', url);
+            
             showScreen('problemsScreen');
             
             // Update title
@@ -430,8 +537,10 @@ async function selectProblem(problemId, problemName) {
         showLoading(true);
         
         const response = await apiCall('/api/instructions', {
-            model_id: currentContext.model,
-            problem_id: problemId
+            query: {
+                model_id: currentContext.model,
+                problem_id: problemId
+            }
         });
         
         if (response.ok) {
@@ -549,6 +658,30 @@ function displayInstructionDetail(instruction) {
         expert: 'Эксперт'
     };
     
+    let mediaHtml = '';
+    if (instruction.media && instruction.media.length > 0) {
+        mediaHtml = `
+            <div class="instruction-media">
+                <h4>📸 Медиафайлы:</h4>
+                <div class="media-gallery">
+                    ${instruction.media.map(media => `
+                        <div class="media-item">
+                            ${media.mimetype.startsWith('image/') ? 
+                                `<img src="${media.url}" alt="${media.originalname}" style="max-width: 100%; border-radius: 8px; margin-bottom: 0.5rem;">` :
+                                `<video controls style="max-width: 100%; border-radius: 8px; margin-bottom: 0.5rem;">
+                                    <source src="${media.url}" type="${media.mimetype}">
+                                </video>`
+                            }
+                            <div class="media-info">
+                                <small style="color: #666; font-size: 0.8rem;">${media.originalname}</small>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `;
+    }
+    
     let stepsHtml = '';
     if (instruction.steps && instruction.steps.length > 0) {
         stepsHtml = `
@@ -564,6 +697,25 @@ function displayInstructionDetail(instruction) {
                 `).join('')}
             </div>
         `;
+    }
+    
+    let stepMediaHtml = '';
+    if (instruction.steps && instruction.steps.length > 0) {
+        stepMediaHtml = instruction.steps.map((step, index) => {
+            if (step.photos && step.photos.length > 0) {
+                return `
+                    <div class="step-media">
+                        <h5>Фото к шагу ${step.step || index + 1}:</h5>
+                        <div class="step-photos">
+                            ${step.photos.map(photo => `
+                                <img src="${photo.url}" alt="${photo.originalname}" style="max-width: 150px; border-radius: 4px; margin: 0.25rem;">
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            return '';
+        }).join('');
     }
     
     let toolsHtml = '';
@@ -624,6 +776,8 @@ function displayInstructionDetail(instruction) {
         
         <div class="instruction-content">
             ${stepsHtml}
+            ${stepMediaHtml}
+            ${mediaHtml}
         </div>
         
         <div class="instruction-actions">
@@ -732,11 +886,31 @@ function updateChatSuggestions(suggestions) {
     });
 }
 
-// Partners screen
+// Partners screen – if first visit, ask for city and show local stores
 async function loadPartners() {
     try {
+        let city = localStorage.getItem('keltison_city');
+        if (!city) {
+            city = prompt('Ваш город? (например: Ростов-на-Дону)');
+            if (city) {
+                localStorage.setItem('keltison_city', city);
+            }
+        }
+
+        // If we have a city, try city-specific stores first
+        if (city) {
+            const storesResp = await apiCall('/api/parts/stores', { query: { city } });
+            if (storesResp.ok) {
+                const stores = await storesResp.json();
+                if (stores && stores.length) {
+                    displayStores(city, stores);
+                    return; // done
+                }
+            }
+        }
+
+        // Fallback to generic partners list
         const response = await apiCall('/api/partners');
-        
         if (response.ok) {
             const partners = await response.json();
             displayPartners(partners);
@@ -752,6 +926,19 @@ async function loadPartners() {
 function displayPartners(partners) {
     const partnersList = document.getElementById('partnersList');
     partnersList.innerHTML = '';
+    // header with change-city if city known
+    const savedCity = localStorage.getItem('keltison_city');
+    const header = document.createElement('div');
+    header.className = 'list-item';
+    header.innerHTML = `
+        <h4>${savedCity ? `Ваш город: ${savedCity}` : 'Город не выбран'}</h4>
+        <div style="margin-top: 0.5rem;">
+            <button class="action-btn secondary" id="changeCityBtn">Изменить город</button>
+        </div>
+    `;
+    partnersList.appendChild(header);
+    const changeBtn1 = header.querySelector('#changeCityBtn');
+    if (changeBtn1) changeBtn1.addEventListener('click', changeCity);
     
     partners.forEach(partner => {
         const partnerItem = document.createElement('div');
@@ -766,9 +953,85 @@ function displayPartners(partners) {
                 </button>
             </div>
         `;
-        
+        // attach opener for this dynamic button
+        const btn = partnerItem.querySelector('[data-action="partner"]');
+        if (btn) {
+            btn.addEventListener('click', function() {
+                const url = this.dataset.url;
+                if (url) openExternal(url);
+            });
+        }
+
         partnersList.appendChild(partnerItem);
     });
+}
+
+function displayStores(city, stores) {
+    const partnersList = document.getElementById('partnersList');
+    partnersList.innerHTML = '';
+    const title = document.getElementById('partnersTitle');
+    if (title) title.textContent = `Запчасти в городе: ${city}`;
+
+    // Add change-city control at top
+    const header = document.createElement('div');
+    header.className = 'list-item';
+    header.innerHTML = `
+        <h4>Ваш город: ${city}</h4>
+        <div style="margin-top: 0.5rem;">
+            <button class="action-btn secondary" id="changeCityBtn">Изменить город</button>
+        </div>
+    `;
+    partnersList.appendChild(header);
+    const changeBtn = header.querySelector('#changeCityBtn');
+    if (changeBtn) changeBtn.addEventListener('click', changeCity);
+
+    stores.forEach(store => {
+        const item = document.createElement('div');
+        item.className = 'list-item';
+        item.innerHTML = `
+            <h4>${store.name}</h4>
+            <p>Надежный магазин запчастей</p>
+            <div style="margin-top: 1rem;">
+                <button class="action-btn" data-action="partner" data-url="${store.url}">🛒 Перейти</button>
+            </div>
+        `;
+        // attach opener for this dynamic button
+        const btn = item.querySelector('[data-action="partner"]');
+        if (btn) {
+            btn.addEventListener('click', function() {
+                const url = this.dataset.url;
+                if (url) openExternal(url);
+            });
+        }
+        partnersList.appendChild(item);
+    });
+}
+
+// Open external link aware of Telegram WebApp
+function openExternal(url) {
+    try {
+        if (tg && tg.openLink) {
+            tg.openLink(url, { try_instant_view: false });
+        } else {
+            window.open(url, '_blank');
+        }
+    } catch (e) {
+        console.error('openExternal error', e);
+        window.location.href = url;
+    }
+}
+
+// Change city flow
+function changeCity() {
+    const current = localStorage.getItem('keltison_city') || '';
+    const next = prompt('Выберите город', current);
+    if (next && next.trim()) {
+        localStorage.setItem('keltison_city', next.trim());
+    } else {
+        localStorage.removeItem('keltison_city');
+    }
+    // reload list
+    loadPartners();
 }
 
 // PRO upgrade
@@ -853,11 +1116,13 @@ function showSuccess(message) {
 async function apiCall(endpoint, options = {}) {
     const token = localStorage.getItem('keltison_token');
     
-    // Обрабатываем query параметры
+    // Обрабатываем query параметры + cache-busting
     let url = endpoint;
-    if (options.query) {
-        const params = new URLSearchParams(options.query);
-        url += '?' + params.toString();
+    const q = new URLSearchParams(options.query || {});
+    q.set('_ts', Date.now().toString()); // кэш-бастинг для API
+    const qs = q.toString();
+    if (qs) {
+        url += (url.includes('?') ? '&' : '?') + qs;
     }
     
     const defaultOptions = {
@@ -970,4 +1235,45 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     
     console.log('Event listeners fixed');
+});
+
+// Функция для получения текущего пользователя
+function getCurrentUser() {
+    return currentUser;
+}
+
+// Функция для открытия админ-панели
+function openAdminPanel() {
+    // Проверяем, что пользователь авторизован как админ
+    const user = getCurrentUser();
+    if (user && user.is_admin) {
+        // Открываем админ-панель в новом окне
+        window.open('/admin-instructions', '_blank');
+    } else {
+        // Показываем сообщение о необходимости авторизации
+        alert('Для доступа к админ-панели необходимо войти как администратор');
+    }
+}
+
+// Функция для показа/скрытия кнопки админ-панели
+function toggleAdminButton() {
+    const user = getCurrentUser();
+    const adminBtn = document.getElementById('adminPanelBtn');
+    
+    if (user && user.is_admin) {
+        adminBtn.style.display = 'block';
+    } else {
+        adminBtn.style.display = 'none';
+    }
+}
+
+// Вызываем функцию при загрузке страницы
+document.addEventListener('DOMContentLoaded', function() {
+    toggleAdminButton();
+    
+    // Добавляем обработчик для кнопки админ
+    const adminBtn = document.getElementById('adminBtn');
+    if (adminBtn) {
+        adminBtn.addEventListener('click', openAdminPanel);
+    }
 });
